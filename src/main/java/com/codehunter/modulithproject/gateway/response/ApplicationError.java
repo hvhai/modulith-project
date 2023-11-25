@@ -1,4 +1,4 @@
-package com.codehunter.modulithproject.gateway;
+package com.codehunter.modulithproject.gateway.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

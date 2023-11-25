@@ -1,4 +1,4 @@
-package com.codehunter.modulithproject.gateway;
+package com.codehunter.modulithproject.gateway.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -2,16 +2,18 @@ package com.codehunter.modulithproject.gateway;
 
 import com.codehunter.modulithproject.countdown_timer.CountdownTimerGreetingDTO;
 import com.codehunter.modulithproject.countdown_timer.CountdownTimerService;
+import com.codehunter.modulithproject.gateway.response.ResponseDTO;
+import com.codehunter.modulithproject.gateway.response.ResponseFormatter;
 import com.codehunter.modulithproject.method_playground.MethodPlaygroundGreetingDTO;
 import com.codehunter.modulithproject.method_playground.MethodPlaygroundService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping("/api")
 public class GatewayController {
     private final CountdownTimerService countdownTimerService;

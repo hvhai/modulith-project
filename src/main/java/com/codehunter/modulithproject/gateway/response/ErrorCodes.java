@@ -1,4 +1,4 @@
-package com.codehunter.modulithproject.gateway;
+package com.codehunter.modulithproject.gateway.response;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

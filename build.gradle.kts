@@ -10,7 +10,7 @@ group = "com.codehunter"
 version = "0.0.1-SNAPSHOT"
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_17
+	sourceCompatibility = JavaVersion.VERSION_21
 }
 
 configurations {
@@ -32,11 +32,12 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.modulith:spring-modulith-starter-core")
 	implementation("org.springframework.modulith:spring-modulith-starter-jpa")
-	implementation("io.micrometer:micrometer-tracing-bridge-otel")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
+
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("com.h2database:h2")
-	runtimeOnly("org.springframework.modulith:spring-modulith-actuator")
-	runtimeOnly("org.springframework.modulith:spring-modulith-observability")
+	runtimeOnly("org.springframework.modulith:spring-modulith-starter-insight")
+	runtimeOnly("io.micrometer:micrometer-tracing-bridge-otel")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
