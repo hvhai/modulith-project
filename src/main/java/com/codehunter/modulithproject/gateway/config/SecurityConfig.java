@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/actuator/**").permitAll())
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/admin/**").hasAnyRole("admin")
+                        .requestMatchers("/api/*/admin/**").hasAnyRole("admin")
                         .anyRequest().hasAnyRole("user", "admin"))
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt
