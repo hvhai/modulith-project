@@ -7,7 +7,7 @@ import lombok.Setter;
 import java.time.Instant;
 
 @Entity
-@Table(name = "event")
+@Table(name = "countdown_event")
 @Setter
 @Getter
 public class JpaEvent {

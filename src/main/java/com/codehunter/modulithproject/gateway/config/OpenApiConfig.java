@@ -15,7 +15,7 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         final String securitySchemeName = "bearerAuth";
-        final String apiTitle = String.format("%s API", StringUtils.capitalize("Modulith Project Api"));
+        final String apiTitle = String.format("%s API", StringUtils.capitalize("Modulith Project"));
         return new OpenAPI()
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName)) // this line make all method must be authenticated
                 .components(

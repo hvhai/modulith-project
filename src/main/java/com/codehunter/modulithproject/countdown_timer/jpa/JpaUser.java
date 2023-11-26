@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "app_user")
+@Table(name = "countdown_app_user")
 @Setter
 @Getter
 public class JpaUser {
