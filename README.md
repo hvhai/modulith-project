@@ -4,7 +4,7 @@
 ```shell
 docker build . --tag modulith-project:latest --platform=linux/amd64
 docker run -p 8080:8080 modulith-project:latest
-docker run -p 8080:8080 -e APP_METHOD_API_TOKEN='sk_JicM3zMVzyB3TAfCUHm8dhP6' modulith-project:latest
+docker run -p 8080:8080 -e APP_METHOD_API_TOKEN='' modulith-project:latest
 ```
 ```shell
 docker tag modulith-project:latest codehunter6323/modulith-project:latest
