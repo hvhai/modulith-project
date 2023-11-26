@@ -24,7 +24,7 @@ public class MethodServiceImpl {
     }
 
     public List<Entity> getAllEntities() {
-        ParameterizedTypeReference<MethodResponse<List<MethodEntity>>> responseType = new ParameterizedTypeReference<MethodResponse<List<MethodEntity>>>() {
+        ParameterizedTypeReference<MethodResponse<List<MethodEntity>>> responseType = new ParameterizedTypeReference<>() {
         };
         ResponseEntity<MethodResponse<List<MethodEntity>>> response = methodClient.exchange(methodBaseUrl + "/entities", HttpMethod.GET, null, responseType);
         MethodResponse<List<MethodEntity>> body = response.getBody();
