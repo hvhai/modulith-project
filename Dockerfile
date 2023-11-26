@@ -1,32 +1,30 @@
-# Use the official maven/Java 8 image to create a build artifact.
-# https://hub.docker.com/_/maven
-FROM gradle:8.4-jdk21-alpine AS build
-#FROM openjdk:17-jdk-slim as build
+# First stage: JDK with GraalVM
+FROM ghcr.io/graalvm/graalvm-community:21 AS build
+
+# Update package lists and Install Maven
+RUN microdnf update -y && \
+microdnf install -y gcc glibc-devel zlib-devel libstdc++-devel gcc-c++ && \
+microdnf clean all
+RUN microdnf install -y findutils
+
 WORKDIR /code
-#
-# # Copy local code to the container image.
+
 COPY . .
-#
-# # Build a release artifact.
-RUN gradle clean build --no-daemon -x test
 
 
-#
-# Package stage
-#
-# It's important to use OpenJDK 8u191 or above that has container support enabled.
-# https://hub.docker.com/r/adoptopenjdk/openjdk8
-# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
-FROM openjdk:21-jdk-slim
+#ENV PATH="${PATH}:/usr/lib64/graalvm/graalvm22-ce-java17/bin/gu"
+RUN echo $(java --version)
+RUN echo $GRAALVM_HOME
+RUN chmod +x gradlew
+RUN ./gradlew nativeCompile --no-daemon
+
+# Second stage: Lightweight debian-slim image
+FROM debian:bookworm-slim
 
 WORKDIR /app
-# Copy the jar to the production image from the builder stage.
-COPY --from=build /code/build/libs/modulith-project-0.0.1-SNAPSHOT.jar app.jar
 
-# ENV PORT=8080
-ARG APP_METHOD_API_TOKEN
-ENV APP_METHOD_API_TOKEN $APP_METHOD_API_TOKEN
+# Copy the native binary from the build stage
+COPY --from=build /code/build/native/nativeCompile/modulith-project /app/modulith-project
 EXPOSE 8080
-
-# Run the web service on container startup.
-ENTRYPOINT ["java","-jar","app.jar"]
+# Run the application
+ENTRYPOINT ["/app/modulith-project"]
