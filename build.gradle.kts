@@ -32,7 +32,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.modulith:spring-modulith-starter-core")
 	implementation("org.springframework.modulith:spring-modulith-starter-jpa")
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 	implementation(project(":common"))
 
 
