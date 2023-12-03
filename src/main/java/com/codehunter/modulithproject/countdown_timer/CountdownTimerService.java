@@ -15,4 +15,6 @@ public interface CountdownTimerService {
     void deleteEvent(@PathVariable Long id);
 
     List<EventDTO> getAllEvents();
+
+    EventDTO updateEvent(Long id, UpdateEventDTO updateEventDTO, UserDTO user);
 }

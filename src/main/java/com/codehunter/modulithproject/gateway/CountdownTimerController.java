@@ -1,9 +1,6 @@
 package com.codehunter.modulithproject.gateway;
 
-import com.codehunter.modulithproject.countdown_timer.CountdownTimerGreetingDTO;
-import com.codehunter.modulithproject.countdown_timer.CountdownTimerService;
-import com.codehunter.modulithproject.countdown_timer.CreateEventDTO;
-import com.codehunter.modulithproject.countdown_timer.EventDTO;
+import com.codehunter.modulithproject.countdown_timer.*;
 import com.codehunter.modulithproject.gateway.mapper.UserMapper;
 import com.codehunter.modulithproject.gateway.response.ResponseDTO;
 import com.codehunter.modulithproject.gateway.response.ResponseFormatter;
@@ -48,6 +45,13 @@ public class CountdownTimerController {
     @DeleteMapping(path = "/events/{id}")
     public void deleteEvent(@PathVariable Long id) {
         countdownTimerService.deleteEvent(id);
+    }
+
+    @PutMapping(path = "/events/{id}")
+    public ResponseEntity<ResponseDTO<EventDTO>> updateEvent(@PathVariable Long id, @RequestBody UpdateEventDTO updateEventDTO) {
+        UserDTO user = AuthenticationUtil.getUser();
+        EventDTO updatedEvent = countdownTimerService.updateEvent(id, updateEventDTO, UserMapper.toCoundownTimerUserDTO(user));
+        return ResponseFormatter.handleSingle(updatedEvent, new HttpHeaders(), HttpStatus.OK);
     }
 
     @GetMapping(path = "/admin/events")

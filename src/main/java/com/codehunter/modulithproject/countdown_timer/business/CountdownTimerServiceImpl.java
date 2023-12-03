@@ -61,4 +61,16 @@ public class CountdownTimerServiceImpl implements CountdownTimerService {
         log.info("getAllEvents by admin");
         return eventService.getAll().stream().map(EventMapper::toEvent).toList();
     }
+
+    @Override
+    public EventDTO updateEvent(Long id, UpdateEventDTO updateEventDTO, UserDTO user) {
+        log.info("updateEvent with userID: {}", user.id());
+        Event event = Event.builder().name(updateEventDTO.name())
+                .id(new Event.EventId(id))
+                .date(updateEventDTO.dateTime())
+                .host(UserMapper.toUser(user))
+                .build();
+        Event updateEvent = eventService.update(event);
+        return toEvent(updateEvent);
+    }
 }
