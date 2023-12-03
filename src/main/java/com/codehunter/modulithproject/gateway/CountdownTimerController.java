@@ -53,6 +53,12 @@ public class CountdownTimerController {
         EventDTO updatedEvent = countdownTimerService.updateEvent(id, updateEventDTO, UserMapper.toCoundownTimerUserDTO(user));
         return ResponseFormatter.handleSingle(updatedEvent, new HttpHeaders(), HttpStatus.OK);
     }
+    @GetMapping(path = "/events/{id}")
+    public ResponseEntity<ResponseDTO<EventDTO>> getEventById(@PathVariable Long id) {
+        UserDTO user = AuthenticationUtil.getUser();
+        EventDTO updatedEvent = countdownTimerService.getEventById(id, UserMapper.toCoundownTimerUserDTO(user));
+        return ResponseFormatter.handleSingle(updatedEvent, new HttpHeaders(), HttpStatus.OK);
+    }
 
     @GetMapping(path = "/admin/events")
     public ResponseEntity<ResponseDTO<List<EventDTO>>> getAllEvents() {

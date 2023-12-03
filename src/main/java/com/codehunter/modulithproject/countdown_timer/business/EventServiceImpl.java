@@ -80,4 +80,11 @@ public class EventServiceImpl {
         JpaEvent save = eventRepository.save(jpaEvent);
         return toEvent(save);
     }
+
+    public Event findById(Long id, User user) {
+        JpaEvent jpaEvent = eventRepository.findByEventIdAndUserId(id, user.getId());
+        if (jpaEvent == null)
+            throw new IdNotFoundException(id.toString());
+        return toEvent(jpaEvent);
+    }
 }

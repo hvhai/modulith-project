@@ -8,7 +8,7 @@ public class EventMapper {
         throw new IllegalStateException("Utility class");
     }
 
-    public static EventDTO toEvent(Event newEvent) {
+    public static EventDTO toEventDTO(Event newEvent) {
         return new EventDTO(newEvent.getId().getValue(), newEvent.getName(), newEvent.getDate());
     }
 }

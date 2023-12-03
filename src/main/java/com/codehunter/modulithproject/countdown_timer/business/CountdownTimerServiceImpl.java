@@ -3,7 +3,6 @@ package com.codehunter.modulithproject.countdown_timer.business;
 import com.codehunter.modulithproject.countdown_timer.*;
 import com.codehunter.modulithproject.countdown_timer.domain.Event;
 import com.codehunter.modulithproject.countdown_timer.mapper.EventMapper;
-import com.codehunter.modulithproject.countdown_timer.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-import static com.codehunter.modulithproject.countdown_timer.mapper.EventMapper.toEvent;
+import static com.codehunter.modulithproject.countdown_timer.mapper.EventMapper.toEventDTO;
+import static com.codehunter.modulithproject.countdown_timer.mapper.UserMapper.toUser;
 
 @Service
 @Slf4j
@@ -31,9 +31,9 @@ public class CountdownTimerServiceImpl implements CountdownTimerService {
     @Override
     public List<EventDTO> getAllEventsByUser(UserDTO user) {
         log.info("getAllEventsByUser with userID: {}", user.id());
-        List<EventDTO> events = eventService.getAllByUser(UserMapper.toUser(user))
+        List<EventDTO> events = eventService.getAllByUser(toUser(user))
                 .stream()
-                .map(EventMapper::toEvent)
+                .map(EventMapper::toEventDTO)
                 .toList();
         return events;
     }
@@ -44,10 +44,10 @@ public class CountdownTimerServiceImpl implements CountdownTimerService {
         log.info("createEvent with userID: {}", user.id());
         Event event = Event.builder().name(createEventDTO.name())
                 .date(createEventDTO.dateTime())
-                .host(UserMapper.toUser(user))
+                .host(toUser(user))
                 .build();
         Event newEvent = eventService.create(event);
-        return toEvent(newEvent);
+        return toEventDTO(newEvent);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class CountdownTimerServiceImpl implements CountdownTimerService {
     @Override
     public List<EventDTO> getAllEvents() {
         log.info("getAllEvents by admin");
-        return eventService.getAll().stream().map(EventMapper::toEvent).toList();
+        return eventService.getAll().stream().map(EventMapper::toEventDTO).toList();
     }
 
     @Override
@@ -68,9 +68,15 @@ public class CountdownTimerServiceImpl implements CountdownTimerService {
         Event event = Event.builder().name(updateEventDTO.name())
                 .id(new Event.EventId(id))
                 .date(updateEventDTO.dateTime())
-                .host(UserMapper.toUser(user))
+                .host(toUser(user))
                 .build();
         Event updateEvent = eventService.update(event);
-        return toEvent(updateEvent);
+        return toEventDTO(updateEvent);
+    }
+
+    @Override
+    public EventDTO getEventById(Long id, UserDTO user) {
+        Event event = eventService.findById(id, toUser(user));
+        return toEventDTO(event);
     }
 }
