@@ -2,7 +2,7 @@ plugins {
 	java
 	id("org.springframework.boot") version "3.2.0"
 	id("io.spring.dependency-management") version "1.1.4"
-	id("org.hibernate.orm") version "6.4.0.Final"
+	id("org.hibernate.orm") version "6.4.1.Final"
 	id("org.graalvm.buildtools.native") version "0.9.28"
 }
 
@@ -32,7 +32,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.modulith:spring-modulith-starter-core")
 	implementation("org.springframework.modulith:spring-modulith-starter-jpa")
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 	implementation(project(":common"))
 
 
