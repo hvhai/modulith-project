@@ -26,26 +26,41 @@ repositories {
 extra["springModulithVersion"] = "1.1.1"
 
 dependencies {
-//	implementation("org.springframework.boot:spring-boot-starter-actuator")
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+	// spring
 	implementation("org.springframework.boot:spring-boot-starter-web")
+
+	// modulith
 	implementation("org.springframework.modulith:spring-modulith-starter-core")
 	implementation("org.springframework.modulith:spring-modulith-starter-jpa")
+	testImplementation("org.springframework.modulith:spring-modulith-starter-test")
+
+	// security
+	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+
+	// Swagger
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
-	implementation(project(":common"))
 
-
-	compileOnly("org.projectlombok:lombok")
+	// database
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	runtimeOnly("com.h2database:h2")
+
+	// utilities
+	compileOnly("org.projectlombok:lombok")
+	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+	annotationProcessor("org.projectlombok:lombok")
+
+	// monitoring
+//	implementation("org.springframework.boot:spring-boot-starter-actuator")
 //	runtimeOnly("org.springframework.modulith:spring-modulith-actuator")
 //	runtimeOnly("org.springframework.modulith:spring-modulith-observability")
 //	runtimeOnly("org.springframework.modulith:spring-modulith-starter-insight")
 //	runtimeOnly("io.micrometer:micrometer-tracing-bridge-otel")
-	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-	annotationProcessor("org.projectlombok:lombok")
+
+	// test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.springframework.modulith:spring-modulith-starter-test")
+
+	// custom
+	implementation(project(":common"))
 }
 
 dependencyManagement {
