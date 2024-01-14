@@ -1,6 +1,6 @@
 package com.codehunter.modulithproject.order.business;
 
-import com.codehunter.modulithproject.inventory.GetProductForOrderEvent;
+import com.codehunter.modulithproject.warehouse.GetProductForOrderEvent;
 import com.codehunter.modulithproject.order.OrderDTO;
 import com.codehunter.modulithproject.order.OrderService;
 import com.codehunter.modulithproject.order.OrderStatus;

@@ -1,6 +1,6 @@
 package com.codehunter.modulithproject.order;
 
-import com.codehunter.modulithproject.inventory.Product;
+import com.codehunter.modulithproject.warehouse.Product;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.List;

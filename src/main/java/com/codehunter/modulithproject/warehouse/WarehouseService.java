@@ -1,6 +1,6 @@
-package com.codehunter.modulithproject.inventory;
+package com.codehunter.modulithproject.warehouse;
 
-public interface InventoryService {
+public interface WarehouseService {
     void onGetProductForOrderEvent(GetProductForOrderEvent getProductForOrderRequest);
 
 }

@@ -1,4 +1,4 @@
-package com.codehunter.modulithproject.inventory;
+package com.codehunter.modulithproject.warehouse;
 
 import java.util.List;
 

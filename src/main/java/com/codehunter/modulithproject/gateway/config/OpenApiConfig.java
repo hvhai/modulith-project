@@ -45,4 +45,12 @@ public class OpenApiConfig {
                 .pathsToMatch("/api/method-playground/**")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi fruitOrderingApi() {
+        return GroupedOpenApi.builder()
+                .group("fruit-ordering")
+                .pathsToMatch("/api/fruit-ordering/**")
+                .build();
+    }
 }
