@@ -23,7 +23,7 @@ repositories {
 	mavenCentral()
 }
 
-extra["springModulithVersion"] = "1.1.2"
+extra["springModulithVersion"] = "1.1.3"
 
 dependencies {
 	// spring
