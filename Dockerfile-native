@@ -1,5 +1,5 @@
 # First stage: JDK with GraalVM
-FROM ghcr.io/graalvm/graalvm-community:21 AS build
+FROM ghcr.io/graalvm/graalvm-community:22 AS build
 
 # Update package lists and Install Maven
 RUN microdnf update -y && \
