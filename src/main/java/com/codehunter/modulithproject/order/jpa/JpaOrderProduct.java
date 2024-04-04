@@ -1,24 +1,23 @@
-package com.codehunter.modulithproject.warehouse.jpa;
+package com.codehunter.modulithproject.order.jpa;
 
-import com.codehunter.modulithproject.order.jpa.JpaOrder;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PostPersist;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Table(name = "fruit_order_product")
 @Getter
-public class JpaProduct {
+@Setter
+@Slf4j
+public class JpaOrderProduct {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    @Setter
     String name;
 
     @ManyToOne
@@ -30,5 +29,10 @@ public class JpaProduct {
                "id='" + id + '\'' +
                ", name='" + name + '\'' +
                '}';
+    }
+
+    @PostPersist
+    void postPersist() {
+        log.info("Product create {}", this);
     }
 }

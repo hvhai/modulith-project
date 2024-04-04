@@ -8,12 +8,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PostPersist;
 import jakarta.persistence.Table;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
 @Entity
 @Table(name = "fruit_order_order")
+@Slf4j
 public class JpaOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -24,6 +27,10 @@ public class JpaOrder {
 
 
     @OneToMany(mappedBy = "order")
-    List<JpaProduct> productList;
+    List<JpaOrderProduct> productList;
 
+    @PostPersist
+    void postPersist() {
+        log.info("Order create with id {}", this.id);
+    }
 }
