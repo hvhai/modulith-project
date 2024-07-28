@@ -7,7 +7,7 @@ import com.codehunter.modulithproject.countdown_timer.jpa.JpaEvent;
 import com.codehunter.modulithproject.countdown_timer.jpa.JpaUser;
 import com.codehunter.modulithproject.countdown_timer.jpa_repository.EventRepository;
 import com.codehunter.modulithproject.countdown_timer.jpa_repository.UserRepository;
-import com.codehunter.modulithproject_lib.common.exception.IdNotFoundException;
+import com.codehunter.modulithproject.shared.IdNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
