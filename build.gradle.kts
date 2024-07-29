@@ -45,6 +45,7 @@ dependencies {
 	runtimeOnly("com.h2database:h2")
 
 	// utilities
+	implementation("org.apache.commons:commons-collections4:4.4")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	annotationProcessor("org.projectlombok:lombok")

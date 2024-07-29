@@ -5,9 +5,9 @@ import com.codehunter.modulithproject.warehouse.WarehouseServiceApi;
 import com.codehunter.modulithproject.warehouse.jpa.JpaWarehouseProduct;
 import com.codehunter.modulithproject.warehouse.jpa_repository.WarehouseProductRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -32,11 +32,17 @@ public class WarehouseServiceImpl implements WarehouseServiceApi {
         List<JpaWarehouseProduct> outOfStockList = existentProductList.stream()
                 .filter(existentProduct -> existentProduct.getQuantity() <= 0)
                 .toList();
-        if (CollectionUtils.isEmpty(outOfStockList)) {
-            log.info("Products are ready for OrderId={}", request.orderId());
-        } else {
+
+        if (CollectionUtils.isNotEmpty(outOfStockList)) {
             outOfStockList.forEach(
                     outOfStockProduct -> log.info("OrderId={} , productId={} out of stock", request.orderId(), outOfStockProduct));
+            return;
         }
+
+        existentProductList.forEach(product -> {
+            product.setQuantity(product.getQuantity() - 1);
+            productRepository.save(product);
+        });
+        log.info("Products are ready for OrderId={}", request.orderId());
     }
 }
