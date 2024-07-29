@@ -4,7 +4,7 @@ import com.codehunter.modulithproject.shared.ProductDTO;
 
 import java.util.List;
 
-public interface WarehouseServiceApi {
+public interface WarehouseService {
     record ReserveProductForOrderRequest(String orderId, List<ProductDTO> productList) {
     }
 

@@ -6,7 +6,7 @@ import com.codehunter.modulithproject.order.jpa.JpaOrderProduct;
 import com.codehunter.modulithproject.order.jpa_repository.OrderProductRepository;
 import com.codehunter.modulithproject.order.jpa_repository.OrderRepository;
 import com.codehunter.modulithproject.warehouse.WarehouseProductCreateEvent;
-import com.codehunter.modulithproject.warehouse.WarehouseServiceApi;
+import com.codehunter.modulithproject.warehouse.WarehouseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
@@ -35,7 +35,7 @@ public class WarehouseEventHandler {
     }
 
     @ApplicationModuleListener
-    void onWarehouseProductPackageCompletedEvent(WarehouseServiceApi.WarehouseProductPackageCompletedEvent event) {
+    void onWarehouseProductPackageCompletedEvent(WarehouseService.WarehouseProductPackageCompletedEvent event) {
         String orderId = event.orderId();
         Optional<JpaOrder> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isEmpty()) {
@@ -49,7 +49,7 @@ public class WarehouseEventHandler {
     }
 
     @ApplicationModuleListener
-    void onWarehouseProductOutOfStockEvent(WarehouseServiceApi.WarehouseProductOutOfStockEvent event) {
+    void onWarehouseProductOutOfStockEvent(WarehouseService.WarehouseProductOutOfStockEvent event) {
         String orderId = event.orderId();
         Optional<JpaOrder> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isEmpty()) {

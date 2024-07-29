@@ -1,7 +1,7 @@
 package com.codehunter.modulithproject.warehouse.business;
 
 import com.codehunter.modulithproject.shared.ProductDTO;
-import com.codehunter.modulithproject.warehouse.WarehouseServiceApi;
+import com.codehunter.modulithproject.warehouse.WarehouseService;
 import com.codehunter.modulithproject.warehouse.jpa.JpaWarehouseProduct;
 import com.codehunter.modulithproject.warehouse.jpa_repository.WarehouseProductRepository;
 import com.codehunter.modulithproject.warehouse.mapper.WarehouseProductMapper;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @Slf4j
-public class WarehouseServiceImpl implements WarehouseServiceApi {
+public class WarehouseServiceImpl implements WarehouseService {
     private final WarehouseProductRepository productRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final WarehouseProductMapper warehouseProductMapper;

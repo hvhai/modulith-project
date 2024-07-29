@@ -9,7 +9,7 @@ import com.codehunter.modulithproject.order.jpa.JpaOrderProduct;
 import com.codehunter.modulithproject.order.jpa_repository.OrderProductRepository;
 import com.codehunter.modulithproject.order.jpa_repository.OrderRepository;
 import com.codehunter.modulithproject.order.mapper.OrderMapper;
-import com.codehunter.modulithproject.warehouse.WarehouseServiceApi;
+import com.codehunter.modulithproject.warehouse.WarehouseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,14 +21,14 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class OrderServiceImpl implements OrderService {
-    private final WarehouseServiceApi warehouseServiceApi;
+    private final WarehouseService warehouseService;
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
     private final OrderMapper orderMapper;
 
-    public OrderServiceImpl(WarehouseServiceApi warehouseServiceApi, OrderRepository orderRepository,
+    public OrderServiceImpl(WarehouseService warehouseService, OrderRepository orderRepository,
                             OrderProductRepository orderProductRepository, OrderMapper orderMapper) {
-        this.warehouseServiceApi = warehouseServiceApi;
+        this.warehouseService = warehouseService;
         this.orderRepository = orderRepository;
         this.orderProductRepository = orderProductRepository;
         this.orderMapper = orderMapper;
@@ -39,8 +39,8 @@ public class OrderServiceImpl implements OrderService {
         JpaOrder newOrder = createJpaOrder(createOrderRequest);
         OrderDTO result = orderMapper.toOrderDTO(newOrder);
 
-        warehouseServiceApi.reserveProductForOrder(
-                new WarehouseServiceApi.ReserveProductForOrderRequest(result.id(), result.productList()));
+        warehouseService.reserveProductForOrder(
+                new WarehouseService.ReserveProductForOrderRequest(result.id(), result.productList()));
         log.info("Order created with id={}, status={}", result.id(), result.orderStatus());
         return result;
     }
