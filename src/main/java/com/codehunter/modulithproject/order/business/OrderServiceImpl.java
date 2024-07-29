@@ -19,7 +19,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-@Transactional
 @Slf4j
 public class OrderServiceImpl implements OrderService {
     private final WarehouseServiceApi warehouseServiceApi;
@@ -37,6 +36,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDTO createOrder(OrderDTO createOrderRequest, UserDTO user) {
+        JpaOrder newOrder = createJpaOrder(createOrderRequest);
+        OrderDTO result = orderMapper.toOrderDTO(newOrder);
+
+        warehouseServiceApi.reserveProductForOrder(
+                new WarehouseServiceApi.ReserveProductForOrderRequest(result.id(), result.productList()));
+        log.info("Order created with id={}, status={}", result.id(), result.orderStatus());
+        return result;
+    }
+
+    @Transactional
+    JpaOrder createJpaOrder(OrderDTO createOrderRequest) {
         JpaOrder order = new JpaOrder();
         order.setOrderStatus(OrderStatus.IN_PRODUCT_PREPARE);
 
@@ -53,12 +63,6 @@ public class OrderServiceImpl implements OrderService {
 
         order.setProductList(productList);
         JpaOrder newOrder = orderRepository.save(order);
-
-        OrderDTO result = orderMapper.toOrderDTO(newOrder);
-
-        warehouseServiceApi.reserveProductForOrder(
-                new WarehouseServiceApi.ReserveProductForOrderRequest(result.id(), result.productList()));
-        log.info("Order created with id={}, status={}", result.id(), result.orderStatus());
-        return result;
+        return newOrder;
     }
 }

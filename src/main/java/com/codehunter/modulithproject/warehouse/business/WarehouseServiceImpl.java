@@ -4,8 +4,10 @@ import com.codehunter.modulithproject.shared.ProductDTO;
 import com.codehunter.modulithproject.warehouse.WarehouseServiceApi;
 import com.codehunter.modulithproject.warehouse.jpa.JpaWarehouseProduct;
 import com.codehunter.modulithproject.warehouse.jpa_repository.WarehouseProductRepository;
+import com.codehunter.modulithproject.warehouse.mapper.WarehouseProductMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,9 +21,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class WarehouseServiceImpl implements WarehouseServiceApi {
     private final WarehouseProductRepository productRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
+    private final WarehouseProductMapper warehouseProductMapper;
 
-    public WarehouseServiceImpl(WarehouseProductRepository productRepository) {
+    public WarehouseServiceImpl(WarehouseProductRepository productRepository, ApplicationEventPublisher applicationEventPublisher, WarehouseProductMapper warehouseProductMapper) {
         this.productRepository = productRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
+        this.warehouseProductMapper = warehouseProductMapper;
     }
 
     @Override
@@ -33,9 +39,11 @@ public class WarehouseServiceImpl implements WarehouseServiceApi {
                 .filter(existentProduct -> existentProduct.getQuantity() <= 0)
                 .toList();
 
+        String orderId = request.orderId();
         if (CollectionUtils.isNotEmpty(outOfStockList)) {
             outOfStockList.forEach(
-                    outOfStockProduct -> log.info("OrderId={} , productId={} out of stock", request.orderId(), outOfStockProduct));
+                    outOfStockProduct -> log.info("OrderId={} , productId={} out of stock", orderId, outOfStockProduct));
+            applicationEventPublisher.publishEvent(new WarehouseProductOutOfStockEvent(orderId, warehouseProductMapper.toProductDto(outOfStockList)));
             return;
         }
 
@@ -43,6 +51,7 @@ public class WarehouseServiceImpl implements WarehouseServiceApi {
             product.setQuantity(product.getQuantity() - 1);
             productRepository.save(product);
         });
-        log.info("Products are ready for OrderId={}", request.orderId());
+        applicationEventPublisher.publishEvent(new WarehouseProductPackageCompletedEvent(orderId));
+        log.info("Products are ready for OrderId={}", orderId);
     }
 }

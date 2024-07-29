@@ -8,5 +8,11 @@ public interface WarehouseServiceApi {
     record ReserveProductForOrderRequest(String orderId, List<ProductDTO> productList) {
     }
 
+    record WarehouseProductOutOfStockEvent(String orderId, List<ProductDTO> productList) {
+    }
+
+    record WarehouseProductPackageCompletedEvent(String orderId) {
+    }
+
     void reserveProductForOrder(ReserveProductForOrderRequest request);
 }
