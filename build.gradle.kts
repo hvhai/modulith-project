@@ -49,6 +49,10 @@ dependencies {
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	annotationProcessor("org.projectlombok:lombok")
 
+	// mapstruct
+	implementation("org.mapstruct:mapstruct:1.5.5.Final")
+	annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
+
 	// monitoring
 //	implementation("org.springframework.boot:spring-boot-starter-actuator")
 //	runtimeOnly("org.springframework.modulith:spring-modulith-actuator")

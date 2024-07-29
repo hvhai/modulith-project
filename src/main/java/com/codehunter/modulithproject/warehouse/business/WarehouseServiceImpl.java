@@ -26,17 +26,17 @@ public class WarehouseServiceImpl implements WarehouseServiceApi {
 
     @Override
     public void reserveProductForOrder(ReserveProductForOrderRequest request) {
-        Map<String, ProductDTO> productMap = request.order().stream()
+        Map<String, ProductDTO> productMap = request.productList().stream()
                 .collect(Collectors.toMap(ProductDTO::id, Function.identity()));
         List<JpaWarehouseProduct> existentProductList = productRepository.findAllById(productMap.keySet());
         List<JpaWarehouseProduct> outOfStockList = existentProductList.stream()
                 .filter(existentProduct -> existentProduct.getQuantity() <= 0)
                 .toList();
         if (CollectionUtils.isEmpty(outOfStockList)) {
-            log.info("Order ready");
+            log.info("Products are ready for OrderId={}", request.orderId());
         } else {
-
-            outOfStockList.forEach(outOfStockProduct -> log.info("{} out of stock", outOfStockProduct));
+            outOfStockList.forEach(
+                    outOfStockProduct -> log.info("OrderId={} , productId={} out of stock", request.orderId(), outOfStockProduct));
         }
     }
 }

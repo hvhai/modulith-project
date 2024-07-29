@@ -26,12 +26,22 @@ import java.util.Collection;
 public class SecurityConfig {
     private static final String AUTHORITY_PREFIX = "ROLE_";
     private static final String CLAIM_ROLES = "http://coundowntimer.com/roles";
+    private static final String[] PUBLIC_RESOURCES = {
+            "/actuator/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/v3/**",
+            "/swagger-resources/**",
+            "/h2-console/**",
+            "/no-auth/**"
+    };
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
         http
-                .securityMatcher("/actuator/**")
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/actuator/**").permitAll())
+                .securityMatcher(PUBLIC_RESOURCES)
+                .authorizeHttpRequests(auth -> auth.requestMatchers(PUBLIC_RESOURCES).permitAll())
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/*/admin/**").hasAnyRole("admin")

@@ -2,12 +2,14 @@ package com.codehunter.modulithproject.order.jpa;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.PostPersist;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 @Entity
 @Table(name = "fruit_order_product")
@@ -20,8 +22,8 @@ public class JpaOrderProduct {
 
     String name;
 
-    @ManyToOne
-    JpaOrder order;
+    @ManyToMany(mappedBy = "productList")
+    List<JpaOrder> orderList;
 
     @Override
     public String toString() {
