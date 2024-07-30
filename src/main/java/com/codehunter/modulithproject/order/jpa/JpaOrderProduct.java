@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,14 +24,17 @@ public class JpaOrderProduct {
 
     String name;
 
+    BigDecimal price;
+
     @ManyToMany(mappedBy = "products")
     Set<JpaOrder> orders = new HashSet<>();
 
     @Override
     public String toString() {
-        return "JpaProduct{" +
+        return "JpaOrderProduct{" +
                "id='" + id + '\'' +
                ", name='" + name + '\'' +
+               ", price=" + price +
                '}';
     }
 

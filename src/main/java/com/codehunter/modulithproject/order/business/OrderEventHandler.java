@@ -5,6 +5,7 @@ import com.codehunter.modulithproject.order.jpa.JpaOrder;
 import com.codehunter.modulithproject.order.jpa.JpaOrderProduct;
 import com.codehunter.modulithproject.order.jpa_repository.OrderProductRepository;
 import com.codehunter.modulithproject.order.jpa_repository.OrderRepository;
+import com.codehunter.modulithproject.payment.PaymentService;
 import com.codehunter.modulithproject.warehouse.WarehouseProductCreateEvent;
 import com.codehunter.modulithproject.warehouse.WarehouseService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,18 +13,21 @@ import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Component
 @Transactional
 @Slf4j
-public class WarehouseEventHandler {
+public class OrderEventHandler {
     private final OrderProductRepository productRepository;
     private final OrderRepository orderRepository;
+    private final PaymentService paymentService;
 
-    public WarehouseEventHandler(OrderProductRepository productRepository, OrderRepository orderRepository) {
+    public OrderEventHandler(OrderProductRepository productRepository, OrderRepository orderRepository, PaymentService paymentService) {
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
+        this.paymentService = paymentService;
     }
 
     @ApplicationModuleListener
@@ -31,6 +35,7 @@ public class WarehouseEventHandler {
         JpaOrderProduct product = new JpaOrderProduct();
         product.setName(event.name());
         product.setId(event.id());
+        product.setPrice(event.price());
         productRepository.save(product);
     }
 
@@ -44,7 +49,13 @@ public class WarehouseEventHandler {
         }
         JpaOrder order = orderOptional.get();
         order.setOrderStatus(OrderStatus.IN_PAYMENT);
+        BigDecimal totalAmount = order.getProducts().stream()
+                .map(JpaOrderProduct::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        order.setTotalAmount(totalAmount);
         orderRepository.save(order);
+
+        paymentService.createPayment(new PaymentService.CreatePaymentRequest(orderId, totalAmount));
         log.info("On WarehouseProductPackageCompletedEvent, Order orderId={} change status to IN_PAYMENT", orderId);
     }
 
