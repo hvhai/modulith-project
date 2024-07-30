@@ -1,6 +1,6 @@
 package com.codehunter.modulithproject.warehouse.business;
 
-import com.codehunter.modulithproject.shared.ProductDTO;
+import com.codehunter.modulithproject.warehouse.ProductDTO;
 import com.codehunter.modulithproject.warehouse.WarehouseProductDTO;
 import com.codehunter.modulithproject.warehouse.WarehouseService;
 import com.codehunter.modulithproject.warehouse.jpa.JpaWarehouseProduct;

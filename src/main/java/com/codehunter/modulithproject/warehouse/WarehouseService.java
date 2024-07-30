@@ -1,7 +1,5 @@
 package com.codehunter.modulithproject.warehouse;
 
-import com.codehunter.modulithproject.shared.ProductDTO;
-
 import java.util.List;
 
 public interface WarehouseService {

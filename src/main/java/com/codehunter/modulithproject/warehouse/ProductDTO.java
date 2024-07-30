@@ -1,4 +1,4 @@
-package com.codehunter.modulithproject.shared;
+package com.codehunter.modulithproject.warehouse;
 
 public record ProductDTO(String id, String name) {
 }
