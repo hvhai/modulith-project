@@ -9,7 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "fruit_order_product")
@@ -22,8 +23,8 @@ public class JpaOrderProduct {
 
     String name;
 
-    @ManyToMany(mappedBy = "productList")
-    List<JpaOrder> orderList;
+    @ManyToMany(mappedBy = "products")
+    Set<JpaOrder> orders = new HashSet<>();
 
     @Override
     public String toString() {

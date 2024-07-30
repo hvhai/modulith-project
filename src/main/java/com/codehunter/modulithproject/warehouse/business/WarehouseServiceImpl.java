@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -33,12 +34,12 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     public void reserveProductForOrder(ReserveProductForOrderRequest request) {
-        Map<String, ProductDTO> productMap = request.productList().stream()
+        Map<String, ProductDTO> productMap = request.products().stream()
                 .collect(Collectors.toMap(ProductDTO::id, Function.identity()));
         List<JpaWarehouseProduct> existentProductList = productRepository.findAllById(productMap.keySet());
-        List<JpaWarehouseProduct> outOfStockList = existentProductList.stream()
+        Set<JpaWarehouseProduct> outOfStockList = existentProductList.stream()
                 .filter(existentProduct -> existentProduct.getQuantity() <= 0)
-                .toList();
+                .collect(Collectors.toSet());
 
         String orderId = request.orderId();
         if (CollectionUtils.isNotEmpty(outOfStockList)) {

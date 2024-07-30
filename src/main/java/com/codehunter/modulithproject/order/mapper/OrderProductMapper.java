@@ -6,11 +6,13 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface OrderProductMapper {
-    @Mapping(target = "orderList", ignore = true)
+    @Mapping(target = "orders", ignore = true)
     JpaOrderProduct toJpaOrderProduct(ProductDTO productDTO);
 
     List<JpaOrderProduct> toJpaOrderProduct(List<ProductDTO> productDTOList);
+    Set<JpaOrderProduct> toJpaOrderProduct(Set<ProductDTO> productDTOSet);
 }
