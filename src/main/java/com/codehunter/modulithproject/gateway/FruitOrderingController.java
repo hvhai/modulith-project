@@ -47,4 +47,10 @@ public class FruitOrderingController {
         return ResponseFormatter.handleList(allProduct);
     }
 
+    @GetMapping("/orders")
+    ResponseEntity<ResponseDTO<List<OrderDTO>>> getAllOrders() {
+        log.info("GET getAllOrders");
+        List<OrderDTO> allOrders = orderService.getAllOrders();
+        return ResponseFormatter.handleList(allOrders);
+    }
 }
