@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -44,6 +45,12 @@ public class OrderServiceImpl implements OrderService {
                 new WarehouseService.ReserveProductForOrderRequest(result.id(), result.products()));
         log.info("Order created with id={}, status={}", result.id(), result.orderStatus());
         return result;
+    }
+
+    @Override
+    public List<OrderDTO> getAllOrders() {
+        List<JpaOrder> allOrders = orderRepository.findAll();
+        return orderMapper.toOrderDTO(allOrders);
     }
 
     @Transactional
