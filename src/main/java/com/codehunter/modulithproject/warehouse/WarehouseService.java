@@ -1,12 +1,13 @@
 package com.codehunter.modulithproject.warehouse;
 
 import java.util.List;
+import java.util.Set;
 
 public interface WarehouseService {
-    record ReserveProductForOrderRequest(String orderId, List<ProductDTO> productList) {
+    record ReserveProductForOrderRequest(String orderId, Set<ProductDTO> products) {
     }
 
-    record WarehouseProductOutOfStockEvent(String orderId, List<ProductDTO> productList) {
+    record WarehouseProductOutOfStockEvent(String orderId, Set<ProductDTO> products) {
     }
 
     record WarehouseProductPackageCompletedEvent(String orderId) {

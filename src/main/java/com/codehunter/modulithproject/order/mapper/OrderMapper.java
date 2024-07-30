@@ -5,9 +5,13 @@ import com.codehunter.modulithproject.order.jpa.JpaOrder;
 import org.mapstruct.Mapper;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
     OrderDTO toOrderDTO(JpaOrder jpaOrder);
+
     List<OrderDTO> toOrderDTO(List<JpaOrder> jpaOrder);
+
+    Set<OrderDTO> toOrderDTO(Set<JpaOrder> jpaOrder);
 }

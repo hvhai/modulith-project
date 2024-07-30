@@ -6,6 +6,7 @@ import com.codehunter.modulithproject.warehouse.jpa.JpaWarehouseProduct;
 import org.mapstruct.Mapper;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface WarehouseProductMapper {
@@ -13,7 +14,11 @@ public interface WarehouseProductMapper {
 
     List<ProductDTO> toProductDto(List<JpaWarehouseProduct> jpaWarehouseProductList);
 
+    Set<ProductDTO> toProductDto(Set<JpaWarehouseProduct> jpaWarehouseProductSet);
+
     WarehouseProductDTO toWarehouseProductDto(JpaWarehouseProduct jpaWarehouseProduct);
 
     List<WarehouseProductDTO> toWarehouseProductDto(List<JpaWarehouseProduct> jpaWarehouseProductList);
+
+    Set<WarehouseProductDTO> toWarehouseProductDto(Set<JpaWarehouseProduct> jpaWarehouseProductSet);
 }

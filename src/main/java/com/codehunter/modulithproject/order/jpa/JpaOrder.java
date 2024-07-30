@@ -17,8 +17,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "fruit_order_order")
@@ -43,7 +43,7 @@ public class JpaOrder {
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
-    List<JpaOrderProduct> productList = new ArrayList<>();
+    Set<JpaOrderProduct> products = new HashSet<>();
 
     @PostPersist
     void postPersist() {

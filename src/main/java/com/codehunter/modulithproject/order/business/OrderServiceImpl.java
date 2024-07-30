@@ -14,9 +14,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -40,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
         OrderDTO result = orderMapper.toOrderDTO(newOrder);
 
         warehouseService.reserveProductForOrder(
-                new WarehouseService.ReserveProductForOrderRequest(result.id(), result.productList()));
+                new WarehouseService.ReserveProductForOrderRequest(result.id(), result.products()));
         log.info("Order created with id={}, status={}", result.id(), result.orderStatus());
         return result;
     }
@@ -50,7 +51,7 @@ public class OrderServiceImpl implements OrderService {
         JpaOrder order = new JpaOrder();
         order.setOrderStatus(OrderStatus.IN_PRODUCT_PREPARE);
 
-        List<JpaOrderProduct> productList = createOrderRequest.productList().stream()
+        Set<JpaOrderProduct> products = createOrderRequest.products().stream()
                 .map(productDTO -> {
                     Optional<JpaOrderProduct> product = orderProductRepository.findById(productDTO.id());
                     if (product.isPresent()) {
@@ -59,9 +60,9 @@ public class OrderServiceImpl implements OrderService {
                     return null;
                 })
                 .filter(Objects::nonNull)
-                .toList();
+                .collect(Collectors.toSet());
 
-        order.setProductList(productList);
+        order.setProducts(products);
         JpaOrder newOrder = orderRepository.save(order);
         return newOrder;
     }
