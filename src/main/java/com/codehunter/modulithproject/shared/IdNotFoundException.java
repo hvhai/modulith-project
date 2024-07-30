@@ -1,4 +1,4 @@
-package com.codehunter.modulithproject_lib.common.exception;
+package com.codehunter.modulithproject.shared;
 
 public class IdNotFoundException extends RuntimeException{
     public IdNotFoundException(String id) {

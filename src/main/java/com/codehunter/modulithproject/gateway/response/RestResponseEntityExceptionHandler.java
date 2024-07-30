@@ -1,6 +1,6 @@
 package com.codehunter.modulithproject.gateway.response;
 
-import com.codehunter.modulithproject_lib.common.exception.IdNotFoundException;
+import com.codehunter.modulithproject.shared.IdNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

@@ -45,9 +45,14 @@ dependencies {
 	runtimeOnly("com.h2database:h2")
 
 	// utilities
+	implementation("org.apache.commons:commons-collections4:4.4")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	annotationProcessor("org.projectlombok:lombok")
+
+	// mapstruct
+	implementation("org.mapstruct:mapstruct:1.5.5.Final")
+	annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
 
 	// monitoring
 //	implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -59,8 +64,6 @@ dependencies {
 	// test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 
-	// custom
-	implementation(project(":common"))
 }
 
 dependencyManagement {
