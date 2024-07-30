@@ -1,4 +1,6 @@
 package com.codehunter.modulithproject.warehouse;
 
-public record WarehouseProductCreateEvent(String id, String name) {
+import java.math.BigDecimal;
+
+public record WarehouseProductCreateEvent(String id, String name, BigDecimal price) {
 }

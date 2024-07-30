@@ -1,4 +1,6 @@
 package com.codehunter.modulithproject.warehouse;
 
-public record WarehouseProductDTO(String id, String name, Integer quantity) {
+import java.math.BigDecimal;
+
+public record WarehouseProductDTO(String id, String name, Integer quantity, BigDecimal price) {
 }

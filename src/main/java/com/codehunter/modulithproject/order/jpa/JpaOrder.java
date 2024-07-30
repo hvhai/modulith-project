@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,6 +33,9 @@ public class JpaOrder {
     @Setter
     @Enumerated(EnumType.STRING)
     OrderStatus orderStatus;
+
+    @Setter
+    BigDecimal totalAmount;
 
 
     @Setter
