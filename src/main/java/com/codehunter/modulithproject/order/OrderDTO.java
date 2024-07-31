@@ -9,6 +9,7 @@ import java.util.Set;
 public record OrderDTO(
         @JsonInclude(JsonInclude.Include.NON_NULL) String id,
         @JsonInclude(JsonInclude.Include.NON_NULL) OrderStatus orderStatus,
+        String paymentId,
         BigDecimal totalAmount,
         Set<ProductDTO> products) {
 }

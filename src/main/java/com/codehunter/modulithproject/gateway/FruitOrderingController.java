@@ -6,6 +6,8 @@ import com.codehunter.modulithproject.gateway.response.ResponseFormatter;
 import com.codehunter.modulithproject.gateway.util.AuthenticationUtil;
 import com.codehunter.modulithproject.order.OrderDTO;
 import com.codehunter.modulithproject.order.OrderService;
+import com.codehunter.modulithproject.payment.PaymentDTO;
+import com.codehunter.modulithproject.payment.PaymentService;
 import com.codehunter.modulithproject.warehouse.WarehouseProductDTO;
 import com.codehunter.modulithproject.warehouse.WarehouseService;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,10 +29,19 @@ import java.util.List;
 public class FruitOrderingController {
     private final OrderService orderService;
     private final WarehouseService warehouseService;
+    private final PaymentService paymentService;
 
-    public FruitOrderingController(OrderService orderService, WarehouseService warehouseService) {
+    public FruitOrderingController(OrderService orderService, WarehouseService warehouseService, PaymentService paymentService) {
         this.orderService = orderService;
         this.warehouseService = warehouseService;
+        this.paymentService = paymentService;
+    }
+
+    @GetMapping("/orders")
+    ResponseEntity<ResponseDTO<List<OrderDTO>>> getAllOrders() {
+        log.info("GET getAllOrders");
+        List<OrderDTO> allOrders = orderService.getAllOrders();
+        return ResponseFormatter.handleList(allOrders);
     }
 
     @PostMapping("/orders")
@@ -47,10 +59,11 @@ public class FruitOrderingController {
         return ResponseFormatter.handleList(allProduct);
     }
 
-    @GetMapping("/orders")
-    ResponseEntity<ResponseDTO<List<OrderDTO>>> getAllOrders() {
-        log.info("GET getAllOrders");
-        List<OrderDTO> allOrders = orderService.getAllOrders();
-        return ResponseFormatter.handleList(allOrders);
+    @PostMapping("/payments/{id}/purchase")
+    ResponseEntity<ResponseDTO<PaymentDTO>> purchaseAPayment(@PathVariable String id) {
+        log.info("POST purchaseAPayment");
+        UserDTO user = AuthenticationUtil.getUser();
+        PaymentDTO payment = paymentService.purchasePayment(id);
+        return ResponseFormatter.handleSingle(payment, new HttpHeaders(), HttpStatus.CREATED);
     }
 }

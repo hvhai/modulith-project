@@ -37,6 +37,9 @@ public class JpaOrder {
     @Setter
     BigDecimal totalAmount;
 
+    @Setter
+    String paymentId;
+
 
     @Setter
     @ManyToMany(cascade = {
