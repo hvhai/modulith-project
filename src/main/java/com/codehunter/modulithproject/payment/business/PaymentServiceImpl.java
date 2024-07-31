@@ -1,6 +1,7 @@
 package com.codehunter.modulithproject.payment.business;
 
 
+import com.codehunter.modulithproject.payment.PaymentCreatedEvent;
 import com.codehunter.modulithproject.payment.PaymentDTO;
 import com.codehunter.modulithproject.payment.PaymentPurchasedEvent;
 import com.codehunter.modulithproject.payment.PaymentService;
@@ -19,7 +20,6 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-@Transactional
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
@@ -32,6 +32,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional
     public PaymentDTO purchasePayment(String id) {
         Optional<JpaPayment> paymentOptional = paymentRepository.findById(id);
         if (paymentOptional.isEmpty()) {
@@ -41,9 +42,9 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setPurchaseAt(Instant.now());
         JpaPayment updatedPayment = paymentRepository.save(payment);
         log.info("Payment purchase id={}, orderId={}", updatedPayment.getId(), updatedPayment.getOrderId());
-
-        applicationEventPublisher.publishEvent(new PaymentPurchasedEvent(updatedPayment.getId(), updatedPayment.getOrderId()));
-        return paymentMapper.toPaymentDTO(updatedPayment);
+        PaymentDTO paymentDTO = paymentMapper.toPaymentDTO(updatedPayment);
+        applicationEventPublisher.publishEvent(new PaymentPurchasedEvent(paymentDTO));
+        return paymentDTO;
     }
 
     @Override
@@ -62,11 +63,15 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
+    @Transactional
     public void createPayment(CreatePaymentRequest request) {
         JpaPayment newPayment = new JpaPayment();
         newPayment.setOrderId(request.orderId());
         newPayment.setTotalAmount(request.totalAmount());
         JpaPayment createdPayment = paymentRepository.save(newPayment);
         log.info("Payment created id={} , orderId={}", createdPayment.getId(), createdPayment.getOrderId());
+
+        PaymentDTO paymentDTO = paymentMapper.toPaymentDTO(createdPayment);
+        applicationEventPublisher.publishEvent(new PaymentCreatedEvent(paymentDTO));
     }
 }

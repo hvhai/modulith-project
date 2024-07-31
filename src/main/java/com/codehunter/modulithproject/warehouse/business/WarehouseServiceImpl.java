@@ -35,6 +35,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     }
 
     @Override
+    @Transactional
     public void reserveProductForOrder(ReserveProductForOrderRequest request) {
         Map<String, ProductDTO> productMap = request.products().stream()
                 .collect(Collectors.toMap(ProductDTO::id, Function.identity()));

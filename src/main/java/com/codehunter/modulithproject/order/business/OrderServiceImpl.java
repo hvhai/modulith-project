@@ -38,6 +38,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public OrderDTO createOrder(OrderDTO createOrderRequest, UserDTO user) {
         JpaOrder newOrder = createJpaOrder(createOrderRequest);
         OrderDTO result = orderMapper.toOrderDTO(newOrder);
