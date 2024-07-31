@@ -1,5 +1,6 @@
 package com.codehunter.modulithproject.warehouse.business;
 
+import com.codehunter.modulithproject.shared.IdNotFoundException;
 import com.codehunter.modulithproject.warehouse.ProductDTO;
 import com.codehunter.modulithproject.warehouse.WarehouseProductDTO;
 import com.codehunter.modulithproject.warehouse.WarehouseService;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -61,5 +63,15 @@ public class WarehouseServiceImpl implements WarehouseService {
     public List<WarehouseProductDTO> getAllProduct() {
         List<JpaWarehouseProduct> allJpaProduct = productRepository.findAll();
         return warehouseProductMapper.toWarehouseProductDto(allJpaProduct);
+    }
+
+    @Override
+    public ProductDTO getProduct(String id) {
+        Optional<JpaWarehouseProduct> jpaWarehouseProduct = productRepository.findById(id);
+        if (jpaWarehouseProduct.isEmpty()) {
+            log.warn("Product not found, id={}", id);
+            throw new IdNotFoundException(String.format("Product not found, id=%s", id));
+        }
+        return warehouseProductMapper.toProductDto(jpaWarehouseProduct.get());
     }
 }

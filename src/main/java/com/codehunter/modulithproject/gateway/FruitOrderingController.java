@@ -8,6 +8,7 @@ import com.codehunter.modulithproject.order.OrderDTO;
 import com.codehunter.modulithproject.order.OrderService;
 import com.codehunter.modulithproject.payment.PaymentDTO;
 import com.codehunter.modulithproject.payment.PaymentService;
+import com.codehunter.modulithproject.warehouse.ProductDTO;
 import com.codehunter.modulithproject.warehouse.WarehouseProductDTO;
 import com.codehunter.modulithproject.warehouse.WarehouseService;
 import lombok.extern.slf4j.Slf4j;
@@ -52,11 +53,39 @@ public class FruitOrderingController {
         return ResponseFormatter.handleSingle(order, new HttpHeaders(), HttpStatus.CREATED);
     }
 
+    @GetMapping("/orders/{id}")
+    ResponseEntity<ResponseDTO<OrderDTO>> getOrderInfo(@PathVariable String id) {
+        log.info("GET getOrderInfo");
+        OrderDTO order = orderService.getOrder(id);
+        return ResponseFormatter.handleSingle(order, new HttpHeaders(), HttpStatus.OK);
+    }
+
     @GetMapping("/products")
     ResponseEntity<ResponseDTO<List<WarehouseProductDTO>>> getAllProduct() {
         log.info("GET getAllProduct");
         List<WarehouseProductDTO> allProduct = warehouseService.getAllProduct();
         return ResponseFormatter.handleList(allProduct);
+    }
+
+    @GetMapping("/products/{id}")
+    ResponseEntity<ResponseDTO<ProductDTO>> getProductInfo(@PathVariable String id) {
+        log.info("GET getProductInfo");
+        ProductDTO product = warehouseService.getProduct(id);
+        return ResponseFormatter.handleSingle(product, new HttpHeaders(), HttpStatus.OK);
+    }
+
+    @GetMapping("/payments")
+    ResponseEntity<ResponseDTO<List<PaymentDTO>>> getAllPayments() {
+        log.info("GET getAllPayments");
+        List<PaymentDTO> allPayments = paymentService.getAllPayments();
+        return ResponseFormatter.handleList(allPayments);
+    }
+
+    @GetMapping("/payments/{id}")
+    ResponseEntity<ResponseDTO<PaymentDTO>> getPaymentInfo(@PathVariable String id) {
+        log.info("GET getPaymentInfo");
+        PaymentDTO payment = paymentService.getPayment(id);
+        return ResponseFormatter.handleSingle(payment, new HttpHeaders(), HttpStatus.OK);
     }
 
     @PostMapping("/payments/{id}/purchase")

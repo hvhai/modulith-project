@@ -16,4 +16,7 @@ public interface WarehouseService {
     void reserveProductForOrder(ReserveProductForOrderRequest request);
 
     List<WarehouseProductDTO> getAllProduct();
+
+    ProductDTO getProduct(String id);
+
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,6 +44,21 @@ public class PaymentServiceImpl implements PaymentService {
 
         applicationEventPublisher.publishEvent(new PaymentPurchasedEvent(updatedPayment.getId(), updatedPayment.getOrderId()));
         return paymentMapper.toPaymentDTO(updatedPayment);
+    }
+
+    @Override
+    public PaymentDTO getPayment(String id) {
+        Optional<JpaPayment> paymentOptional = paymentRepository.findById(id);
+        if (paymentOptional.isEmpty()) {
+            throw new IdNotFoundException(String.format("Payment not found, id=%s", id));
+        }
+        return paymentMapper.toPaymentDTO(paymentOptional.get());
+    }
+
+    @Override
+    public List<PaymentDTO> getAllPayments() {
+        List<JpaPayment> allOrders = paymentRepository.findAll();
+        return paymentMapper.toPaymentDTO(allOrders);
     }
 
     @Override

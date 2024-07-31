@@ -9,6 +9,7 @@ import com.codehunter.modulithproject.order.jpa.JpaOrderProduct;
 import com.codehunter.modulithproject.order.jpa_repository.OrderProductRepository;
 import com.codehunter.modulithproject.order.jpa_repository.OrderRepository;
 import com.codehunter.modulithproject.order.mapper.OrderMapper;
+import com.codehunter.modulithproject.shared.IdNotFoundException;
 import com.codehunter.modulithproject.warehouse.WarehouseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,16 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDTO> getAllOrders() {
         List<JpaOrder> allOrders = orderRepository.findAll();
         return orderMapper.toOrderDTO(allOrders);
+    }
+
+    @Override
+    public OrderDTO getOrder(String id) {
+        Optional<JpaOrder> orderOptional = orderRepository.findById(id);
+        if (orderOptional.isEmpty()) {
+            log.warn("Order not found, id={}", id);
+            throw new IdNotFoundException(String.format("Order not found, id=%s", id));
+        }
+        return orderMapper.toOrderDTO(orderOptional.get());
     }
 
     @Transactional
