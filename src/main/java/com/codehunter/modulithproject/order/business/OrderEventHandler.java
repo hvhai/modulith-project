@@ -5,6 +5,7 @@ import com.codehunter.modulithproject.order.jpa.JpaOrder;
 import com.codehunter.modulithproject.order.jpa.JpaOrderProduct;
 import com.codehunter.modulithproject.order.jpa_repository.OrderProductRepository;
 import com.codehunter.modulithproject.order.jpa_repository.OrderRepository;
+import com.codehunter.modulithproject.payment.PaymentPurchasedEvent;
 import com.codehunter.modulithproject.payment.PaymentService;
 import com.codehunter.modulithproject.warehouse.WarehouseProductCreateEvent;
 import com.codehunter.modulithproject.warehouse.WarehouseService;
@@ -71,5 +72,20 @@ public class OrderEventHandler {
         order.setOrderStatus(OrderStatus.CANCELED);
         orderRepository.save(order);
         log.info("On WarehouseProductPackageCompletedEvent, Order orderId={} change status to CANCELED", orderId);
+    }
+
+    @ApplicationModuleListener
+    void onWarehouseProductOutOfStockEvent(PaymentPurchasedEvent event) {
+        String orderId = event.orderId();
+        Optional<JpaOrder> orderOptional = orderRepository.findById(orderId);
+        if (orderOptional.isEmpty()) {
+            log.error("Order with orderId={} not found", orderId);
+            return;
+        }
+        JpaOrder order = orderOptional.get();
+        order.setPaymentId(event.id());
+        order.setOrderStatus(OrderStatus.DONE);
+        orderRepository.save(order);
+        log.info("On PaymentPurchasedEvent, Order orderId={} change status to DONE", orderId);
     }
 }
