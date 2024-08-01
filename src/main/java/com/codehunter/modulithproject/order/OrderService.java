@@ -6,4 +6,6 @@ public interface OrderService {
     OrderDTO createOrder(OrderDTO createOrderRequest, UserDTO user);
 
     List<OrderDTO> getAllOrders();
+
+    OrderDTO getOrder(String id);
 }

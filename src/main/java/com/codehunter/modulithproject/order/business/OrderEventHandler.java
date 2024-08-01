@@ -2,9 +2,12 @@ package com.codehunter.modulithproject.order.business;
 
 import com.codehunter.modulithproject.order.OrderStatus;
 import com.codehunter.modulithproject.order.jpa.JpaOrder;
+import com.codehunter.modulithproject.order.jpa.JpaOrderPayment;
 import com.codehunter.modulithproject.order.jpa.JpaOrderProduct;
 import com.codehunter.modulithproject.order.jpa_repository.OrderProductRepository;
 import com.codehunter.modulithproject.order.jpa_repository.OrderRepository;
+import com.codehunter.modulithproject.order.mapper.OrderPaymentMapper;
+import com.codehunter.modulithproject.payment.PaymentCreatedEvent;
 import com.codehunter.modulithproject.payment.PaymentPurchasedEvent;
 import com.codehunter.modulithproject.payment.PaymentService;
 import com.codehunter.modulithproject.warehouse.WarehouseProductCreateEvent;
@@ -18,17 +21,19 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 @Component
-@Transactional
 @Slf4j
 public class OrderEventHandler {
     private final OrderProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final PaymentService paymentService;
+    private final OrderPaymentMapper orderPaymentMapper;
 
-    public OrderEventHandler(OrderProductRepository productRepository, OrderRepository orderRepository, PaymentService paymentService) {
+    public OrderEventHandler(OrderProductRepository productRepository, OrderRepository orderRepository,
+                             PaymentService paymentService, OrderPaymentMapper orderPaymentMapper) {
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
         this.paymentService = paymentService;
+        this.orderPaymentMapper = orderPaymentMapper;
     }
 
     @ApplicationModuleListener
@@ -43,6 +48,7 @@ public class OrderEventHandler {
     @ApplicationModuleListener
     void onWarehouseProductPackageCompletedEvent(WarehouseService.WarehouseProductPackageCompletedEvent event) {
         String orderId = event.orderId();
+        log.info("On WarehouseProductPackageCompletedEvent, Order orderId={}", orderId);
         Optional<JpaOrder> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isEmpty()) {
             log.error("Order with orderId={} not found", orderId);
@@ -63,6 +69,7 @@ public class OrderEventHandler {
     @ApplicationModuleListener
     void onWarehouseProductOutOfStockEvent(WarehouseService.WarehouseProductOutOfStockEvent event) {
         String orderId = event.orderId();
+        log.info("On WarehouseProductOutOfStockEvent, Order orderId={}", orderId);
         Optional<JpaOrder> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isEmpty()) {
             log.error("Order with orderId={} not found", orderId);
@@ -75,15 +82,33 @@ public class OrderEventHandler {
     }
 
     @ApplicationModuleListener
-    void onWarehouseProductOutOfStockEvent(PaymentPurchasedEvent event) {
-        String orderId = event.orderId();
+    void onPaymentCreatedEvent(PaymentCreatedEvent event) {
+        String orderId = event.payment().orderId();
+        log.info("On PaymentCreatedEvent, Order orderId={}", orderId);
         Optional<JpaOrder> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isEmpty()) {
             log.error("Order with orderId={} not found", orderId);
             return;
         }
         JpaOrder order = orderOptional.get();
-        order.setPaymentId(event.id());
+        JpaOrderPayment jpaOrderPayment = orderPaymentMapper.toJpaOrderPayment(event.payment());
+        order.setPayment(jpaOrderPayment);
+        order.setOrderStatus(OrderStatus.WAITING_FOR_PAYMENT);
+        orderRepository.save(order);
+        log.info("On PaymentCreatedEvent, Order orderId={} change status to WAITING_FOR_PAYMENT", orderId);
+    }
+
+    @ApplicationModuleListener
+    void onPaymentPurchasedEvent(PaymentPurchasedEvent event) {
+        String orderId = event.payment().orderId();
+        log.info("On PaymentPurchasedEvent, Order orderId={}", orderId);
+        Optional<JpaOrder> orderOptional = orderRepository.findById(orderId);
+        if (orderOptional.isEmpty()) {
+            log.error("Order with orderId={} not found", orderId);
+            return;
+        }
+        JpaOrder order = orderOptional.get();
+        order.setPayment(orderPaymentMapper.toJpaOrderPayment(event.payment()));
         order.setOrderStatus(OrderStatus.DONE);
         orderRepository.save(order);
         log.info("On PaymentPurchasedEvent, Order orderId={} change status to DONE", orderId);
