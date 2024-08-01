@@ -1,4 +1,6 @@
 # Modulith project using Spring Native and Spring Modulith
+
+## Commands
 ``` shell 
 docker build . --tag modulith-project:latest --platform=linux/amd64
 docker run --rm -p 8080:8080 modulith-project:latest
@@ -22,3 +24,7 @@ docker run -it --rm --entrypoint /bin/bash ghcr.io/graalvm/jdk-community:21
 https://hilla.dev/blog/ai-chatbot-in-java/deploying-a-spring-boot-app-as-a-graalvm-native-image-with-docker/
 
 [GraalVM gu remove](https://github.com/oracle/graal/issues/6855)
+
+
+## Food Ordering flow
+![fruits-ordering-flow.png](doc%2Ffruits-ordering-flow.png)
