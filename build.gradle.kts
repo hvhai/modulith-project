@@ -1,6 +1,6 @@
 plugins {
 	java
-	id("org.springframework.boot") version "3.3.0"
+	id("org.springframework.boot") version "3.3.2"
 	id("io.spring.dependency-management") version "1.1.6"
 	id("org.hibernate.orm") version "6.5.2.Final"
 	id("org.graalvm.buildtools.native") version "0.10.2"
@@ -23,7 +23,7 @@ repositories {
 	mavenCentral()
 }
 
-extra["springModulithVersion"] = "1.2.0"
+extra["springModulithVersion"] = "1.2.2"
 
 dependencies {
 	// spring
@@ -38,7 +38,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
 	// Swagger
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 
 	// database
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
