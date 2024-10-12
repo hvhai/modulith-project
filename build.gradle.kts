@@ -61,6 +61,12 @@ dependencies {
 //	runtimeOnly("org.springframework.modulith:spring-modulith-starter-insight")
 //	runtimeOnly("io.micrometer:micrometer-tracing-bridge-otel")
 
+	// UI
+	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+	implementation("com.okta.spring:okta-spring-boot-starter:3.0.7")
+	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
+	implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
+
 	// test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 
