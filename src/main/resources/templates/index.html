@@ -14,8 +14,8 @@
 
             <hr/>
 
-            <div class="next-steps my-5">
-                <div class="card">
+            <div class="next-steps my-5 row">
+                <div class="card col-6 p-0">
                     <div class="card-header">
                        API Document
                     </div>
@@ -23,6 +23,16 @@
                         <h5 class="card-title">Swagger UI page</h5>
                         <p class="card-text">Listing all supported API by service</p>
                         <a th:href="@{/swagger-ui/index.html}" class="btn btn-primary">Go</a>
+                    </div>
+                </div>
+                <div class="card col-6 p-0">
+                    <div class="card-header">
+                       Single page application
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Angular Material Playground</h5>
+                        <p class="card-text">SPA app using this API power by Angular</p>
+                        <a href="https://hvhai.github.io/angular-material-playground" class="btn btn-primary">Go</a>
                     </div>
                 </div>
             </div>
