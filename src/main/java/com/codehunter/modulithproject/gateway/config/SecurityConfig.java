@@ -29,7 +29,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 
 @Configuration
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 public class SecurityConfig {
     private static final String AUTHORITY_PREFIX = "ROLE_";
     private static final String CLAIM_ROLES = "http://coundowntimer.com/roles";
