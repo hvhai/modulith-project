@@ -1,9 +1,8 @@
 plugins {
 	java
-	id("org.springframework.boot") version "3.3.2"
+	id("org.springframework.boot") version "3.3.4"
 	id("io.spring.dependency-management") version "1.1.6"
-	id("org.hibernate.orm") version "6.5.2.Final"
-	id("org.graalvm.buildtools.native") version "0.10.2"
+	id("org.hibernate.orm") version "6.6.1.Final"
 }
 
 group = "com.codehunter"
@@ -23,7 +22,7 @@ repositories {
 	mavenCentral()
 }
 
-extra["springModulithVersion"] = "1.2.2"
+extra["springModulithVersion"] = "1.2.4"
 
 dependencies {
 	// spring
@@ -51,15 +50,14 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok")
 
 	// mapstruct
-	implementation("org.mapstruct:mapstruct:1.5.5.Final")
-	annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
+	implementation("org.mapstruct:mapstruct:1.6.2")
+	annotationProcessor("org.mapstruct:mapstruct-processor:1.6.2")
 
 	// monitoring
-//	implementation("org.springframework.boot:spring-boot-starter-actuator")
-//	runtimeOnly("org.springframework.modulith:spring-modulith-actuator")
-//	runtimeOnly("org.springframework.modulith:spring-modulith-observability")
-//	runtimeOnly("org.springframework.modulith:spring-modulith-starter-insight")
-//	runtimeOnly("io.micrometer:micrometer-tracing-bridge-otel")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
+	runtimeOnly("org.springframework.modulith:spring-modulith-starter-insight")
+	runtimeOnly("io.micrometer:micrometer-tracing-bridge-otel")
+	runtimeOnly("io.opentelemetry:opentelemetry-exporter-zipkin")
 
 	// UI
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")

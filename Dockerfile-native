@@ -1,11 +1,14 @@
 # First stage: JDK with GraalVM
 FROM ghcr.io/graalvm/graalvm-community:21 AS build
+#FROM ghcr.io/graalvm/native-image-community:21 AS build
 
 # Update package lists and Install Maven
-RUN microdnf update -y && \
-microdnf install -y gcc glibc-devel zlib-devel libstdc++-devel gcc-c++ && \
-microdnf clean all
-RUN microdnf install -y findutils
+RUN microdnf install yum -y
+RUN yum update --allowerasing -y && \
+yum install -y gcc glibc-devel zlib-devel libstdc++-devel gcc-c++ && \
+yum clean all
+
+RUN yum install -y findutils
 
 WORKDIR /code
 

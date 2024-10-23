@@ -1,33 +1,42 @@
-# First stage: JDK with GraalVM
-FROM ghcr.io/graalvm/graalvm-community:21 AS build
-#FROM ghcr.io/graalvm/native-image-community:21 AS build
-
-# Update package lists and Install Maven
-RUN microdnf install yum -y
-RUN yum update --allowerasing -y && \
-yum install -y gcc glibc-devel zlib-devel libstdc++-devel gcc-c++ && \
-yum clean all
-
-RUN yum install -y findutils
-
+# Use the official maven/Java 8 image to create a build artifact.
+# https://hub.docker.com/_/maven
+FROM gradle:8.5-jdk21-alpine AS build
+#FROM openjdk:17-jdk-slim as build
 WORKDIR /code
-
+#
+# # Copy local code to the container image.
 COPY . .
+#
+# # Build a release artifact.
+RUN gradle clean build --no-daemon -x test
 
 
-#ENV PATH="${PATH}:/usr/lib64/graalvm/graalvm22-ce-java17/bin/gu"
-RUN echo $(java --version)
-RUN echo $GRAALVM_HOME
-RUN chmod +x gradlew
-RUN ./gradlew nativeCompile --no-daemon
-
-# Second stage: Lightweight debian-slim image
-FROM debian:bookworm-slim
+#
+# Package stage
+#
+# It's important to use OpenJDK 8u191 or above that has container support enabled.
+# https://hub.docker.com/r/adoptopenjdk/openjdk8
+# https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
+FROM openjdk:21-jdk-slim
 
 WORKDIR /app
+# Copy the jar to the production image from the builder stage.
+COPY --from=build /code/build/libs/modulith-project-0.0.1-SNAPSHOT.jar app.jar
 
-# Copy the native binary from the build stage
-COPY --from=build /code/build/native/nativeCompile/modulith-project /app/modulith-project
+# ENV PORT=8080
+ARG APP_METHOD_API_TOKEN
+ENV APP_METHOD_API_TOKEN $APP_METHOD_API_TOKEN
+
+ARG DOMAIN
+ENV DOMAIN $DOMAIN
+
+ARG CLIENT_ID
+ENV CLIENT_ID $CLIENT_ID
+
+ARG CLIENT_SECRET
+ENV CLIENT_SECRET $CLIENT_SECRET
+
 EXPOSE 8080
-# Run the application
-ENTRYPOINT ["/app/modulith-project"]
+
+# Run the web service on container startup.
+ENTRYPOINT ["java","-jar","app.jar"]
