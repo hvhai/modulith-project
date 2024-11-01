@@ -37,6 +37,7 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     @Transactional
     public void reserveProductForOrder(ReserveProductForOrderRequest request) {
+        log.info("Reserve product for OrderId={}", request.orderId());
         Map<String, ProductDTO> productMap = request.products().stream()
                 .collect(Collectors.toMap(ProductDTO::id, Function.identity()));
         List<JpaWarehouseProduct> existentProductList = productRepository.findAllById(productMap.keySet());
@@ -47,7 +48,8 @@ public class WarehouseServiceImpl implements WarehouseService {
         String orderId = request.orderId();
         if (CollectionUtils.isNotEmpty(outOfStockList)) {
             outOfStockList.forEach(
-                    outOfStockProduct -> log.info("OrderId={} , productId={} out of stock", orderId, outOfStockProduct));
+                    outOfStockProduct -> log.info("OrderId={}, productId={} out of stock", orderId, outOfStockProduct));
+            log.info("[WarehouseProductOutOfStockEvent]Products are out of stock for OrderId={}", orderId);
             applicationEventPublisher.publishEvent(new WarehouseProductOutOfStockEvent(orderId, warehouseProductMapper.toProductDto(outOfStockList)));
             return;
         }
@@ -56,8 +58,8 @@ public class WarehouseServiceImpl implements WarehouseService {
             product.setQuantity(product.getQuantity() - 1);
             productRepository.save(product);
         });
+        log.info("[WarehouseProductPackageCompletedEvent]Products are ready for OrderId={}", orderId);
         applicationEventPublisher.publishEvent(new WarehouseProductPackageCompletedEvent(orderId));
-        log.info("Products are ready for OrderId={}", orderId);
     }
 
     @Override

@@ -42,6 +42,8 @@ dependencies {
 	// database
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	runtimeOnly("com.h2database:h2")
+	implementation("com.mysql:mysql-connector-j")
+	testImplementation("org.testcontainers:mysql")
 
 	// utilities
 	implementation("org.apache.commons:commons-collections4:4.4")

@@ -2,7 +2,6 @@ package com.codehunter.modulithproject.order.business;
 
 import com.codehunter.modulithproject.order.OrderDTO;
 import com.codehunter.modulithproject.order.OrderService;
-import com.codehunter.modulithproject.order.OrderStatus;
 import com.codehunter.modulithproject.order.UserDTO;
 import com.codehunter.modulithproject.order.jpa.JpaOrder;
 import com.codehunter.modulithproject.order.jpa.JpaOrderProduct;
@@ -40,12 +39,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderDTO createOrder(OrderDTO createOrderRequest, UserDTO user) {
+        log.info("Create order with id={}, status={}", createOrderRequest.id(), createOrderRequest.orderStatus());
         JpaOrder newOrder = createJpaOrder(createOrderRequest);
         OrderDTO result = orderMapper.toOrderDTO(newOrder);
-
-        warehouseService.reserveProductForOrder(
-                new WarehouseService.ReserveProductForOrderRequest(result.id(), result.products()));
-        log.info("Order created with id={}, status={}", result.id(), result.orderStatus());
         return result;
     }
 
@@ -67,9 +63,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     JpaOrder createJpaOrder(OrderDTO createOrderRequest) {
-        JpaOrder order = new JpaOrder();
-        order.setOrderStatus(OrderStatus.IN_PRODUCT_PREPARE);
-
         Set<JpaOrderProduct> products = createOrderRequest.products().stream()
                 .map(productDTO -> {
                     Optional<JpaOrderProduct> product = orderProductRepository.findById(productDTO.id());
@@ -81,7 +74,7 @@ public class OrderServiceImpl implements OrderService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
-        order.setProducts(products);
+        JpaOrder order = new JpaOrder(products);
         JpaOrder newOrder = orderRepository.save(order);
         return newOrder;
     }

@@ -77,6 +77,7 @@ public class SecurityConfig {
     public SecurityFilterChain mvcSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(PUBLIC_RESOURCES).permitAll()
                         .requestMatchers("/", "/images/**", "/api/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(withDefaults())

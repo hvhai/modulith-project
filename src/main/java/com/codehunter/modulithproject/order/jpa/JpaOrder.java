@@ -18,6 +18,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -27,7 +28,7 @@ import java.util.Set;
 @Table(name = "fruit_order_order")
 @Slf4j
 @Getter
-public class JpaOrder {
+public class JpaOrder extends AbstractAggregateRoot<JpaOrder> {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
@@ -59,8 +60,46 @@ public class JpaOrder {
     )
     Set<JpaOrderProduct> products = new HashSet<>();
 
+    public JpaOrder() {
+
+    }
+
     @PostPersist
     void postPersist() {
-        log.info("Order create with id {}", this.id);
+        log.info("[PostPersist] Order persisted with id {}", this.id);
+    }
+
+    public JpaOrder(Set<JpaOrderProduct> products) {
+        log.info("Order created");
+        this.products = products;
+        this.orderStatus = OrderStatus.IN_PRODUCT_PREPARE;
+        registerEvent(new OrderCreatedEvent(this));
+    }
+
+    public JpaOrder registerForPayment() {
+        log.info("Order register payment");
+        this.orderStatus = OrderStatus.IN_PAYMENT;
+        BigDecimal totalAmount = this.products.stream()
+                .map(JpaOrderProduct::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        this.totalAmount = totalAmount;
+        registerEvent(new OrderInRegisterPaymentEvent(this));
+        return this;
+    }
+
+    public JpaOrder initPayment(JpaOrderPayment payment) {
+        log.info("Order init payment");
+        this.payment = payment;
+        this.orderStatus = OrderStatus.WAITING_FOR_PAYMENT;
+        return this;
+    }
+
+    public record OrderCreatedEvent(JpaOrder order) {
+    }
+
+    public record OrderInRegisterPaymentEvent(JpaOrder order) {
+    }
+
+    public record OrderInPaymentCreateEvent(JpaOrder order) {
     }
 }
