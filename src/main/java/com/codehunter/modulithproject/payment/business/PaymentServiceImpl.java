@@ -68,7 +68,7 @@ public class PaymentServiceImpl implements PaymentService {
         log.info("Create payment for: orderId={}, totalAmount={}", request.orderId(), request.totalAmount());
         JpaPayment newPayment = new JpaPayment(request.orderId(), request.totalAmount());
         JpaPayment createdPayment = paymentRepository.save(newPayment);
-//        PaymentDTO paymentDTO = paymentMapper.toPaymentDTO(createdPayment);
-//        applicationEventPublisher.publishEvent(new PaymentCreatedEvent(paymentDTO));
+        PaymentDTO paymentDTO = paymentMapper.toPaymentDTO(createdPayment);
+        applicationEventPublisher.publishEvent(new PaymentCreatedEvent(paymentDTO));
     }
 }

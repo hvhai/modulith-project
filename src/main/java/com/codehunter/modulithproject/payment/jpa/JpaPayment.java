@@ -1,7 +1,6 @@
 package com.codehunter.modulithproject.payment.jpa;
 
-import com.codehunter.modulithproject.payment.PaymentCreatedEvent;
-import com.codehunter.modulithproject.payment.PaymentDTO;
+import com.codehunter.modulithproject.payment.mapper.PaymentMapper;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +10,7 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.math.BigDecimal;
@@ -21,6 +21,7 @@ import java.time.Instant;
 @Slf4j
 @Getter
 public class JpaPayment extends AbstractAggregateRoot<JpaPayment> {
+    private static final PaymentMapper paymentMapper = Mappers.getMapper(PaymentMapper.class);
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -47,10 +48,5 @@ public class JpaPayment extends AbstractAggregateRoot<JpaPayment> {
         log.info("Payment created");
         this.orderId = orderId;
         this.totalAmount = totalAmount;
-        registerEvent(new PaymentCreateEvent(this));
-    }
-
-    public record PaymentCreateEvent(JpaPayment payment) {
-
     }
 }
