@@ -41,7 +41,7 @@ public class JpaPayment extends AbstractAggregateRoot<JpaPayment> {
 
     @PostPersist
     void postPersist() {
-        log.info("[PostPersist] Payment persisted with id {}", this.id);
+        log.info("[PostPersist] JpaPayment persisted with id {}", this.id);
     }
 
     public JpaPayment(String orderId, BigDecimal totalAmount) {

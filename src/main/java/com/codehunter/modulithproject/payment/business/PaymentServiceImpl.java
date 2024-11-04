@@ -40,6 +40,7 @@ public class PaymentServiceImpl implements PaymentService {
         JpaPayment payment = paymentOptional.get();
         JpaPayment updatedPayment = paymentRepository.save(payment.purchase());
         PaymentDTO paymentDTO = paymentMapper.toPaymentDTO(updatedPayment);
+        log.info("[PaymentPurchasedEvent]Payment is purchased for OrderId={}", payment.getOrderId());
         applicationEventPublisher.publishEvent(new PaymentPurchasedEvent(paymentDTO));
         return paymentDTO;
     }
@@ -65,6 +66,7 @@ public class PaymentServiceImpl implements PaymentService {
         JpaPayment newPayment = new JpaPayment(request.orderId(), request.totalAmount());
         JpaPayment createdPayment = paymentRepository.save(newPayment);
         PaymentDTO paymentDTO = paymentMapper.toPaymentDTO(createdPayment);
+        log.info("[PaymentCreatedEvent]Payment created for OrderId={}", createdPayment.getOrderId());
         applicationEventPublisher.publishEvent(new PaymentCreatedEvent(paymentDTO));
     }
 }

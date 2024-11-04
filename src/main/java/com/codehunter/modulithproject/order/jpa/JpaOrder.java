@@ -100,7 +100,7 @@ public class JpaOrder extends AbstractAggregateRoot<JpaOrder> {
 
     public JpaOrder cancel() {
         log.info("Cancel order id={}", this.id);
-        this.orderStatus = OrderStatus.DONE;
+        this.orderStatus = OrderStatus.CANCELED;
         return this;
     }
 }

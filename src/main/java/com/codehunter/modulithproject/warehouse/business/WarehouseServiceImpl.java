@@ -5,10 +5,10 @@ import com.codehunter.modulithproject.warehouse.ProductDTO;
 import com.codehunter.modulithproject.warehouse.WarehouseProductDTO;
 import com.codehunter.modulithproject.warehouse.WarehouseService;
 import com.codehunter.modulithproject.warehouse.jpa.JpaWarehouseProduct;
+import com.codehunter.modulithproject.warehouse.jpa.ProductOutOfStockException;
 import com.codehunter.modulithproject.warehouse.jpa_repository.WarehouseProductRepository;
 import com.codehunter.modulithproject.warehouse.mapper.WarehouseProductMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -37,27 +36,20 @@ public class WarehouseServiceImpl implements WarehouseService {
     @Override
     @Transactional
     public void reserveProductForOrder(ReserveProductForOrderRequest request) {
+        String orderId = request.orderId();
         log.info("Reserve product for OrderId={}", request.orderId());
         Map<String, ProductDTO> productMap = request.products().stream()
                 .collect(Collectors.toMap(ProductDTO::id, Function.identity()));
         List<JpaWarehouseProduct> existentProductList = productRepository.findAllById(productMap.keySet());
-        Set<JpaWarehouseProduct> outOfStockList = existentProductList.stream()
-                .filter(existentProduct -> existentProduct.getQuantity() <= 0)
-                .collect(Collectors.toSet());
 
-        String orderId = request.orderId();
-        if (CollectionUtils.isNotEmpty(outOfStockList)) {
-            outOfStockList.forEach(
-                    outOfStockProduct -> log.info("OrderId={}, productId={} out of stock", orderId, outOfStockProduct));
+        try {
+            existentProductList.forEach(JpaWarehouseProduct::reserveForOrder);
+        } catch (ProductOutOfStockException exception) {
             log.info("[WarehouseProductOutOfStockEvent]Products are out of stock for OrderId={}", orderId);
-            applicationEventPublisher.publishEvent(new WarehouseProductOutOfStockEvent(orderId, warehouseProductMapper.toProductDto(outOfStockList)));
+            applicationEventPublisher.publishEvent(new WarehouseProductOutOfStockEvent(request.orderId(), warehouseProductMapper.toProductDto(exception.getProduct())));
             return;
         }
-
-        existentProductList.forEach(product -> {
-            product.setQuantity(product.getQuantity() - 1);
-            productRepository.save(product);
-        });
+        productRepository.saveAll(existentProductList);
         log.info("[WarehouseProductPackageCompletedEvent]Products are ready for OrderId={}", orderId);
         applicationEventPublisher.publishEvent(new WarehouseProductPackageCompletedEvent(orderId));
     }
