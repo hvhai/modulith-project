@@ -45,8 +45,14 @@ public class JpaPayment extends AbstractAggregateRoot<JpaPayment> {
     }
 
     public JpaPayment(String orderId, BigDecimal totalAmount) {
-        log.info("Payment created");
+        log.info("Create payment for: orderId={}, totalAmount={}", orderId, totalAmount);
         this.orderId = orderId;
         this.totalAmount = totalAmount;
+    }
+
+    public JpaPayment purchase() {
+        log.info("Purchase payment id={}, orderId={}", this.id, this.orderId);
+        this.purchaseAt = Instant.now();
+        return this;
     }
 }

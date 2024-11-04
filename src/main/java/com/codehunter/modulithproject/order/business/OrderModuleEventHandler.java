@@ -1,6 +1,5 @@
 package com.codehunter.modulithproject.order.business;
 
-import com.codehunter.modulithproject.order.OrderStatus;
 import com.codehunter.modulithproject.order.jpa.JpaOrder;
 import com.codehunter.modulithproject.order.jpa.JpaOrderPayment;
 import com.codehunter.modulithproject.order.jpa.JpaOrderProduct;
@@ -62,7 +61,8 @@ public class OrderModuleEventHandler {
             return;
         }
         JpaOrder order = orderOptional.get();
-        orderRepository.save(order.registerForPayment());
+        JpaOrder updatedOrder = orderRepository.save(order.registerForPayment());
+        paymentService.createPayment(new PaymentService.CreatePaymentRequest(orderId, updatedOrder.getTotalAmount()));
     }
 
     @ApplicationModuleListener
@@ -75,9 +75,8 @@ public class OrderModuleEventHandler {
             return;
         }
         JpaOrder order = orderOptional.get();
-        order.setOrderStatus(OrderStatus.CANCELED);
-        orderRepository.save(order);
-        log.info("On WarehouseProductPackageCompletedEvent, Order orderId={} change status to CANCELED", orderId);
+        orderRepository.save(order.cancel());
+        log.info("On WarehouseProductOutOfStockEvent, Order orderId={} change status to CANCELED", orderId);
     }
 
     @Async
@@ -93,7 +92,7 @@ public class OrderModuleEventHandler {
         }
         JpaOrder order = orderOptional.get();
         JpaOrderPayment jpaOrderPayment = orderPaymentRepository.save(new JpaOrderPayment(event.payment().id(), order, event.payment().totalAmount()));
-        orderRepository.save(order.initPayment(jpaOrderPayment));
+        orderRepository.save(order.waitingForPayment(jpaOrderPayment));
         log.info("On PaymentCreatedEvent, Order orderId={} change status to WAITING_FOR_PAYMENT", orderId);
     }
 
@@ -107,9 +106,7 @@ public class OrderModuleEventHandler {
             return;
         }
         JpaOrder order = orderOptional.get();
-        order.setPayment(orderPaymentMapper.toJpaOrderPayment(event.payment()));
-        order.setOrderStatus(OrderStatus.DONE);
-        orderRepository.save(order);
+        orderRepository.save(order.finish());
         log.info("On PaymentPurchasedEvent, Order orderId={} change status to DONE", orderId);
     }
 }

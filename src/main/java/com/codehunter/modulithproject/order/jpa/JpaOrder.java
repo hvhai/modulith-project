@@ -70,36 +70,37 @@ public class JpaOrder extends AbstractAggregateRoot<JpaOrder> {
     }
 
     public JpaOrder(Set<JpaOrderProduct> products) {
-        log.info("Order created");
+        log.info("Create Order");
         this.products = products;
         this.orderStatus = OrderStatus.IN_PRODUCT_PREPARE;
-        registerEvent(new OrderCreatedEvent(this));
     }
 
     public JpaOrder registerForPayment() {
-        log.info("Order register payment");
+        log.info("Register payment for Order id={}", this.id);
         this.orderStatus = OrderStatus.IN_PAYMENT;
         BigDecimal totalAmount = this.products.stream()
                 .map(JpaOrderProduct::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         this.totalAmount = totalAmount;
-        registerEvent(new OrderInRegisterPaymentEvent(this));
         return this;
     }
 
-    public JpaOrder initPayment(JpaOrderPayment payment) {
-        log.info("Order init payment");
+    public JpaOrder waitingForPayment(JpaOrderPayment payment) {
+        log.info("Register payment success, update order id={}", this.id);
         this.payment = payment;
         this.orderStatus = OrderStatus.WAITING_FOR_PAYMENT;
         return this;
     }
 
-    public record OrderCreatedEvent(JpaOrder order) {
+    public JpaOrder finish() {
+        log.info("Purchase success, update order id={}", this.id);
+        this.orderStatus = OrderStatus.DONE;
+        return this;
     }
 
-    public record OrderInRegisterPaymentEvent(JpaOrder order) {
-    }
-
-    public record OrderInPaymentCreateEvent(JpaOrder order) {
+    public JpaOrder cancel() {
+        log.info("Cancel order id={}", this.id);
+        this.orderStatus = OrderStatus.DONE;
+        return this;
     }
 }

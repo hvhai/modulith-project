@@ -14,7 +14,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,9 +38,7 @@ public class PaymentServiceImpl implements PaymentService {
             throw new IdNotFoundException(String.format("Payment not found, id=%s", id));
         }
         JpaPayment payment = paymentOptional.get();
-        payment.setPurchaseAt(Instant.now());
-        JpaPayment updatedPayment = paymentRepository.save(payment);
-        log.info("Payment purchase id={}, orderId={}", updatedPayment.getId(), updatedPayment.getOrderId());
+        JpaPayment updatedPayment = paymentRepository.save(payment.purchase());
         PaymentDTO paymentDTO = paymentMapper.toPaymentDTO(updatedPayment);
         applicationEventPublisher.publishEvent(new PaymentPurchasedEvent(paymentDTO));
         return paymentDTO;
@@ -65,7 +62,6 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public void createPayment(CreatePaymentRequest request) {
-        log.info("Create payment for: orderId={}, totalAmount={}", request.orderId(), request.totalAmount());
         JpaPayment newPayment = new JpaPayment(request.orderId(), request.totalAmount());
         JpaPayment createdPayment = paymentRepository.save(newPayment);
         PaymentDTO paymentDTO = paymentMapper.toPaymentDTO(createdPayment);

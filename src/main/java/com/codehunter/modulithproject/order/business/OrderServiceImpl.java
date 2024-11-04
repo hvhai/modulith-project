@@ -8,6 +8,7 @@ import com.codehunter.modulithproject.order.jpa.JpaOrderProduct;
 import com.codehunter.modulithproject.order.jpa_repository.OrderProductRepository;
 import com.codehunter.modulithproject.order.jpa_repository.OrderRepository;
 import com.codehunter.modulithproject.order.mapper.OrderMapper;
+import com.codehunter.modulithproject.order.mapper.OrderProductMapper;
 import com.codehunter.modulithproject.shared.IdNotFoundException;
 import com.codehunter.modulithproject.warehouse.WarehouseService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,21 +28,24 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
     private final OrderMapper orderMapper;
+    private final OrderProductMapper orderProductMapper;
 
     public OrderServiceImpl(WarehouseService warehouseService, OrderRepository orderRepository,
-                            OrderProductRepository orderProductRepository, OrderMapper orderMapper) {
+                            OrderProductRepository orderProductRepository, OrderMapper orderMapper, OrderProductMapper orderProductMapper) {
         this.warehouseService = warehouseService;
         this.orderRepository = orderRepository;
         this.orderProductRepository = orderProductRepository;
         this.orderMapper = orderMapper;
+        this.orderProductMapper = orderProductMapper;
     }
 
     @Override
     @Transactional
     public OrderDTO createOrder(OrderDTO createOrderRequest, UserDTO user) {
-        log.info("Create order with id={}, status={}", createOrderRequest.id(), createOrderRequest.orderStatus());
         JpaOrder newOrder = createJpaOrder(createOrderRequest);
         OrderDTO result = orderMapper.toOrderDTO(newOrder);
+        warehouseService.reserveProductForOrder(
+                new WarehouseService.ReserveProductForOrderRequest(result.id(), result.products()));
         return result;
     }
 
