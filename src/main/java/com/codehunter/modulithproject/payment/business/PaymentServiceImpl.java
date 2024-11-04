@@ -14,7 +14,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,10 +38,9 @@ public class PaymentServiceImpl implements PaymentService {
             throw new IdNotFoundException(String.format("Payment not found, id=%s", id));
         }
         JpaPayment payment = paymentOptional.get();
-        payment.setPurchaseAt(Instant.now());
-        JpaPayment updatedPayment = paymentRepository.save(payment);
-        log.info("Payment purchase id={}, orderId={}", updatedPayment.getId(), updatedPayment.getOrderId());
+        JpaPayment updatedPayment = paymentRepository.save(payment.purchase());
         PaymentDTO paymentDTO = paymentMapper.toPaymentDTO(updatedPayment);
+        log.info("[PaymentPurchasedEvent]Payment is purchased for OrderId={}", payment.getOrderId());
         applicationEventPublisher.publishEvent(new PaymentPurchasedEvent(paymentDTO));
         return paymentDTO;
     }
@@ -65,13 +63,10 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public void createPayment(CreatePaymentRequest request) {
-        JpaPayment newPayment = new JpaPayment();
-        newPayment.setOrderId(request.orderId());
-        newPayment.setTotalAmount(request.totalAmount());
+        JpaPayment newPayment = new JpaPayment(request.orderId(), request.totalAmount());
         JpaPayment createdPayment = paymentRepository.save(newPayment);
-        log.info("Payment created id={} , orderId={}", createdPayment.getId(), createdPayment.getOrderId());
-
         PaymentDTO paymentDTO = paymentMapper.toPaymentDTO(createdPayment);
+        log.info("[PaymentCreatedEvent]Payment created for OrderId={}", createdPayment.getOrderId());
         applicationEventPublisher.publishEvent(new PaymentCreatedEvent(paymentDTO));
     }
 }

@@ -38,4 +38,21 @@ public class JpaWarehouseProduct {
                ", price=" + price +
                '}';
     }
+
+    public JpaWarehouseProduct() {
+    }
+
+    public JpaWarehouseProduct(String name, Integer quantity, BigDecimal price) {
+        this.name = name;
+        this.quantity = quantity;
+        this.price = price;
+    }
+
+    public JpaWarehouseProduct reserveForOrder() {
+        if (this.quantity < 1) {
+            throw new ProductOutOfStockException("Not enough quantity to reserve " + this, this);
+        }
+        this.quantity -= quantity;
+        return this;
+    }
 }

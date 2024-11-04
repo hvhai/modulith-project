@@ -7,7 +7,7 @@ public interface WarehouseService {
     record ReserveProductForOrderRequest(String orderId, Set<ProductDTO> products) {
     }
 
-    record WarehouseProductOutOfStockEvent(String orderId, Set<ProductDTO> products) {
+    record WarehouseProductOutOfStockEvent(String orderId, ProductDTO product) {
     }
 
     record WarehouseProductPackageCompletedEvent(String orderId) {

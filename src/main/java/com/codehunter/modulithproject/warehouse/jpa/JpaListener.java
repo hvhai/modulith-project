@@ -16,6 +16,6 @@ public class JpaListener {
 
     @PostPersist
     private void afterCreate(JpaWarehouseProduct product) {
-        log.info("After create product {}", product);
+        log.info("[PostPersist] JpaWarehouseProduct create product {}", product);
     }
 }
