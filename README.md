@@ -32,4 +32,4 @@ https://hilla.dev/blog/ai-chatbot-in-java/deploying-a-spring-boot-app-as-a-graal
 
 
 ## Food Ordering flow
-![fruits-ordering-flow.png](doc%2Ffruits-ordering-flow.png)
+![fruits-ordering-flow.png](doc/fruits-ordering-flow.png)

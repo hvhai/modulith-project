@@ -1,0 +1,1 @@
+alter table event_publication MODIFY serialized_event TEXT;
