@@ -1,6 +1,8 @@
 package com.codehunter.modulithproject.order.business;
 
-import com.codehunter.modulithproject.order.OrderDTO;
+import com.codehunter.modulithproject.eventsourcing.EventSourcingService;
+import com.codehunter.modulithproject.eventsourcing.OrderDTO;
+import com.codehunter.modulithproject.eventsourcing.OrderEvent;
 import com.codehunter.modulithproject.order.OrderService;
 import com.codehunter.modulithproject.order.UserDTO;
 import com.codehunter.modulithproject.order.jpa.JpaOrder;
@@ -8,9 +10,7 @@ import com.codehunter.modulithproject.order.jpa.JpaOrderProduct;
 import com.codehunter.modulithproject.order.jpa_repository.OrderProductRepository;
 import com.codehunter.modulithproject.order.jpa_repository.OrderRepository;
 import com.codehunter.modulithproject.order.mapper.OrderMapper;
-import com.codehunter.modulithproject.order.mapper.OrderProductMapper;
 import com.codehunter.modulithproject.shared.IdNotFoundException;
-import com.codehunter.modulithproject.warehouse.WarehouseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,19 +24,17 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class OrderServiceImpl implements OrderService {
-    private final WarehouseService warehouseService;
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
     private final OrderMapper orderMapper;
-    private final OrderProductMapper orderProductMapper;
+    private final EventSourcingService eventSourcingService;
 
-    public OrderServiceImpl(WarehouseService warehouseService, OrderRepository orderRepository,
-                            OrderProductRepository orderProductRepository, OrderMapper orderMapper, OrderProductMapper orderProductMapper) {
-        this.warehouseService = warehouseService;
+    public OrderServiceImpl(OrderRepository orderRepository,
+                            OrderProductRepository orderProductRepository, OrderMapper orderMapper, EventSourcingService eventSourcingService) {
         this.orderRepository = orderRepository;
         this.orderProductRepository = orderProductRepository;
         this.orderMapper = orderMapper;
-        this.orderProductMapper = orderProductMapper;
+        this.eventSourcingService = eventSourcingService;
     }
 
     @Override
@@ -44,8 +42,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderDTO createOrder(OrderDTO createOrderRequest, UserDTO user) {
         JpaOrder newOrder = createJpaOrder(createOrderRequest);
         OrderDTO result = orderMapper.toOrderDTO(newOrder);
-        warehouseService.reserveProductForOrder(
-                new WarehouseService.ReserveProductForOrderRequest(result.id(), result.products()));
+        eventSourcingService.addOrderEvent(new OrderEvent(result, OrderEvent.OrderEventType.CREATED));
         return result;
     }
 

@@ -1,4 +1,4 @@
-package com.codehunter.modulithproject.warehouse;
+package com.codehunter.modulithproject.eventsourcing;
 
 import java.math.BigDecimal;
 

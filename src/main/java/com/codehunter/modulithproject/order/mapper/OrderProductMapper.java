@@ -1,7 +1,7 @@
 package com.codehunter.modulithproject.order.mapper;
 
 import com.codehunter.modulithproject.order.jpa.JpaOrderProduct;
-import com.codehunter.modulithproject.warehouse.ProductDTO;
+import com.codehunter.modulithproject.eventsourcing.ProductDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

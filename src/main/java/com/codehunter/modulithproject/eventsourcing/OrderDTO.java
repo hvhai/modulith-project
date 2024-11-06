@@ -1,7 +1,5 @@
-package com.codehunter.modulithproject.order;
+package com.codehunter.modulithproject.eventsourcing;
 
-import com.codehunter.modulithproject.payment.PaymentDTO;
-import com.codehunter.modulithproject.warehouse.ProductDTO;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.math.BigDecimal;

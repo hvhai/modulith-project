@@ -1,16 +1,15 @@
 package com.codehunter.modulithproject.payment.business;
 
 
-import com.codehunter.modulithproject.payment.PaymentCreatedEvent;
-import com.codehunter.modulithproject.payment.PaymentDTO;
-import com.codehunter.modulithproject.payment.PaymentPurchasedEvent;
+import com.codehunter.modulithproject.eventsourcing.EventSourcingService;
+import com.codehunter.modulithproject.eventsourcing.PaymentDTO;
+import com.codehunter.modulithproject.eventsourcing.PaymentEvent;
 import com.codehunter.modulithproject.payment.PaymentService;
 import com.codehunter.modulithproject.payment.jpa.JpaPayment;
 import com.codehunter.modulithproject.payment.jpa_repository.PaymentRepository;
 import com.codehunter.modulithproject.payment.mapper.PaymentMapper;
 import com.codehunter.modulithproject.shared.IdNotFoundException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,12 +21,12 @@ import java.util.Optional;
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
-    private final ApplicationEventPublisher applicationEventPublisher;
+    private final EventSourcingService eventSourcingService;
 
-    public PaymentServiceImpl(PaymentRepository paymentRepository, PaymentMapper paymentMapper, ApplicationEventPublisher applicationEventPublisher) {
+    public PaymentServiceImpl(PaymentRepository paymentRepository, PaymentMapper paymentMapper, EventSourcingService eventSourcingService) {
         this.paymentRepository = paymentRepository;
         this.paymentMapper = paymentMapper;
-        this.applicationEventPublisher = applicationEventPublisher;
+        this.eventSourcingService = eventSourcingService;
     }
 
     @Override
@@ -41,7 +40,8 @@ public class PaymentServiceImpl implements PaymentService {
         JpaPayment updatedPayment = paymentRepository.save(payment.purchase());
         PaymentDTO paymentDTO = paymentMapper.toPaymentDTO(updatedPayment);
         log.info("[PaymentPurchasedEvent]Payment is purchased for OrderId={}", payment.getOrderId());
-        applicationEventPublisher.publishEvent(new PaymentPurchasedEvent(paymentDTO));
+//        applicationEventPublisher.publishEvent(new PaymentPurchasedEvent(paymentDTO));
+        eventSourcingService.addPaymentEvent(new PaymentEvent(paymentDTO, PaymentEvent.PaymentEventType.PURCHASED));
         return paymentDTO;
     }
 
@@ -67,6 +67,7 @@ public class PaymentServiceImpl implements PaymentService {
         JpaPayment createdPayment = paymentRepository.save(newPayment);
         PaymentDTO paymentDTO = paymentMapper.toPaymentDTO(createdPayment);
         log.info("[PaymentCreatedEvent]Payment created for OrderId={}", createdPayment.getOrderId());
-        applicationEventPublisher.publishEvent(new PaymentCreatedEvent(paymentDTO));
+//        applicationEventPublisher.publishEvent(new PaymentCreatedEvent(paymentDTO));
+        eventSourcingService.addPaymentEvent(new PaymentEvent(paymentDTO, PaymentEvent.PaymentEventType.CREATED));
     }
 }

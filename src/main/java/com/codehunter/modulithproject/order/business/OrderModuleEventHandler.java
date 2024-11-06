@@ -1,25 +1,23 @@
 package com.codehunter.modulithproject.order.business;
 
+import com.codehunter.modulithproject.eventsourcing.EventSourcingService;
+import com.codehunter.modulithproject.eventsourcing.OrderEvent;
+import com.codehunter.modulithproject.eventsourcing.PaymentEvent;
+import com.codehunter.modulithproject.eventsourcing.WarehouseEvent;
 import com.codehunter.modulithproject.order.jpa.JpaOrder;
 import com.codehunter.modulithproject.order.jpa.JpaOrderPayment;
 import com.codehunter.modulithproject.order.jpa.JpaOrderProduct;
 import com.codehunter.modulithproject.order.jpa_repository.OrderPaymentRepository;
 import com.codehunter.modulithproject.order.jpa_repository.OrderProductRepository;
 import com.codehunter.modulithproject.order.jpa_repository.OrderRepository;
-import com.codehunter.modulithproject.order.mapper.OrderPaymentMapper;
+import com.codehunter.modulithproject.order.mapper.OrderMapper;
 import com.codehunter.modulithproject.payment.PaymentCreatedEvent;
 import com.codehunter.modulithproject.payment.PaymentPurchasedEvent;
-import com.codehunter.modulithproject.payment.PaymentService;
 import com.codehunter.modulithproject.warehouse.WarehouseProductCreateEvent;
 import com.codehunter.modulithproject.warehouse.WarehouseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.modulith.events.ApplicationModuleListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.Optional;
 
@@ -29,19 +27,18 @@ public class OrderModuleEventHandler {
     private final OrderProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final OrderPaymentRepository orderPaymentRepository;
-    private final PaymentService paymentService;
-    private final OrderPaymentMapper orderPaymentMapper;
+    private final EventSourcingService eventSourcingService;
+    private final OrderMapper orderMapper;
 
     public OrderModuleEventHandler(OrderProductRepository productRepository, OrderRepository orderRepository, OrderPaymentRepository orderPaymentRepository,
-                                   PaymentService paymentService, OrderPaymentMapper orderPaymentMapper) {
+                                   EventSourcingService eventSourcingService, OrderMapper orderMapper) {
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
         this.orderPaymentRepository = orderPaymentRepository;
-        this.paymentService = paymentService;
-        this.orderPaymentMapper = orderPaymentMapper;
+        this.eventSourcingService = eventSourcingService;
+        this.orderMapper = orderMapper;
     }
 
-    @ApplicationModuleListener
     void onWarehouseProductCreateEvent(WarehouseProductCreateEvent event) {
         log.info("On WarehouseProductCreateEvent, Product id={}, name={}, price={}", event.id(), event.name(), event.price());
         JpaOrderProduct product = new JpaOrderProduct();
@@ -51,7 +48,6 @@ public class OrderModuleEventHandler {
         productRepository.save(product);
     }
 
-    @ApplicationModuleListener
     void onWarehouseProductPackageCompletedEvent(WarehouseService.WarehouseProductPackageCompletedEvent event) {
         String orderId = event.orderId();
         log.info("On WarehouseProductPackageCompletedEvent, Order orderId={}", orderId);
@@ -62,10 +58,10 @@ public class OrderModuleEventHandler {
         }
         JpaOrder order = orderOptional.get();
         JpaOrder updatedOrder = orderRepository.save(order.registerForPayment());
-        paymentService.createPayment(new PaymentService.CreatePaymentRequest(orderId, updatedOrder.getTotalAmount()));
+//        paymentService.createPayment(new PaymentService.CreatePaymentRequest(orderId, updatedOrder.getTotalAmount()));
+        eventSourcingService.addOrderEvent(new OrderEvent(orderMapper.toOrderDTO(updatedOrder), OrderEvent.OrderEventType.IN_PAYMENT));
     }
 
-    @ApplicationModuleListener
     void onWarehouseProductOutOfStockEvent(WarehouseService.WarehouseProductOutOfStockEvent event) {
         String orderId = event.orderId();
         log.info("On WarehouseProductOutOfStockEvent, Order orderId={}", orderId);
@@ -79,9 +75,6 @@ public class OrderModuleEventHandler {
         log.info("On WarehouseProductOutOfStockEvent, Order orderId={} change status to CANCELED", orderId);
     }
 
-    @Async
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void onPaymentCreatedEvent(PaymentCreatedEvent event) {
         String orderId = event.payment().orderId();
         log.info("On PaymentCreatedEvent, Order orderId={}", orderId);
@@ -96,7 +89,6 @@ public class OrderModuleEventHandler {
         log.info("On PaymentCreatedEvent, Order orderId={} change status to WAITING_FOR_PAYMENT", orderId);
     }
 
-    @ApplicationModuleListener
     void onPaymentPurchasedEvent(PaymentPurchasedEvent event) {
         String orderId = event.payment().orderId();
         log.info("On PaymentPurchasedEvent, Order orderId={}", orderId);
@@ -108,5 +100,37 @@ public class OrderModuleEventHandler {
         JpaOrder order = orderOptional.get();
         orderRepository.save(order.finish());
         log.info("On PaymentPurchasedEvent, Order orderId={} change status to DONE", orderId);
+    }
+
+    @ApplicationModuleListener
+    public void onWarehouseEvent(WarehouseEvent warehouseEvent) {
+        log.info("[Order]Consume Warehouse event {}", warehouseEvent.warehouseEventType());
+        switch (warehouseEvent.warehouseEventType()) {
+            case OUT_OF_STOCK_PRODUCT:
+                onWarehouseProductOutOfStockEvent(new WarehouseService.WarehouseProductOutOfStockEvent(warehouseEvent.orderId(), warehouseEvent.products().getFirst()));
+                break;
+            case RESERVE_PRODUCT_COMPLETED:
+                onWarehouseProductPackageCompletedEvent(new WarehouseService.WarehouseProductPackageCompletedEvent(warehouseEvent.orderId()));
+                break;
+            case ADD_PRODUCT:
+                onWarehouseProductCreateEvent(new WarehouseProductCreateEvent(warehouseEvent.products().getFirst().id(), warehouseEvent.products().getFirst().name(), warehouseEvent.products().getFirst().price()));
+                break;
+        }
+
+    }
+
+    @ApplicationModuleListener
+    public void onPaymentEvent(PaymentEvent paymentEvent) {
+        log.info("[Order]Consume Payment event {}", paymentEvent.paymentEventType());
+        switch (paymentEvent.paymentEventType()) {
+            case CREATED:
+                onPaymentCreatedEvent(new PaymentCreatedEvent(paymentEvent.payment()));
+                break;
+            case PURCHASED:
+                onPaymentPurchasedEvent(new PaymentPurchasedEvent(paymentEvent.payment()));
+                break;
+        }
+
+
     }
 }

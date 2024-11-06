@@ -1,6 +1,6 @@
 package com.codehunter.modulithproject.order.jpa;
 
-import com.codehunter.modulithproject.order.OrderStatus;
+import com.codehunter.modulithproject.eventsourcing.OrderStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

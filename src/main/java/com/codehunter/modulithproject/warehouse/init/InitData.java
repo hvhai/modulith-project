@@ -1,8 +1,10 @@
 package com.codehunter.modulithproject.warehouse.init;
 
-import com.codehunter.modulithproject.warehouse.WarehouseProductCreateEvent;
+import com.codehunter.modulithproject.eventsourcing.EventSourcingService;
+import com.codehunter.modulithproject.eventsourcing.WarehouseEvent;
 import com.codehunter.modulithproject.warehouse.jpa.JpaWarehouseProduct;
 import com.codehunter.modulithproject.warehouse.jpa_repository.WarehouseProductRepository;
+import com.codehunter.modulithproject.warehouse.mapper.WarehouseProductMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
@@ -19,10 +21,14 @@ import java.util.List;
 public class InitData implements ApplicationListener<ContextRefreshedEvent> {
     private final WarehouseProductRepository productRepository;
     private final ApplicationEventPublisher publisher;
+    private final EventSourcingService eventSourcingService;
+    private final WarehouseProductMapper warehouseProductMapper;
 
-    public InitData(WarehouseProductRepository productRepository, ApplicationEventPublisher publisher) {
+    public InitData(WarehouseProductRepository productRepository, ApplicationEventPublisher publisher, EventSourcingService eventSourcingService, WarehouseProductMapper warehouseProductMapper) {
         this.productRepository = productRepository;
         this.publisher = publisher;
+        this.eventSourcingService = eventSourcingService;
+        this.warehouseProductMapper = warehouseProductMapper;
     }
 
     @Override
@@ -41,8 +47,9 @@ public class InitData implements ApplicationListener<ContextRefreshedEvent> {
         product3.setQuantity(5);
         product3.setPrice(new BigDecimal(2_000));
         List<JpaWarehouseProduct> jpaProducts = productRepository.saveAll(List.of(product1, product2, product3));
-        jpaProducts.stream().forEach(product ->
-                publisher.publishEvent(
-                        new WarehouseProductCreateEvent(product.getId(), product.getName(), product.getPrice())));
+        jpaProducts.stream()
+                .forEach(product ->
+                        eventSourcingService.addWarehouseEvent(
+                                new WarehouseEvent(List.of(warehouseProductMapper.toProductDto(product)), product.getId(), WarehouseEvent.WarehouseEventType.ADD_PRODUCT)));
     }
 }

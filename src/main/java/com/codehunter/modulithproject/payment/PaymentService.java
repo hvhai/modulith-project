@@ -1,5 +1,7 @@
 package com.codehunter.modulithproject.payment;
 
+import com.codehunter.modulithproject.eventsourcing.PaymentDTO;
+
 import java.math.BigDecimal;
 import java.util.List;
 

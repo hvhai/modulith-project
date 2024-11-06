@@ -1,7 +1,9 @@
 package com.codehunter.modulithproject.warehouse.business;
 
+import com.codehunter.modulithproject.eventsourcing.EventSourcingService;
+import com.codehunter.modulithproject.eventsourcing.ProductDTO;
+import com.codehunter.modulithproject.eventsourcing.WarehouseEvent;
 import com.codehunter.modulithproject.shared.IdNotFoundException;
-import com.codehunter.modulithproject.warehouse.ProductDTO;
 import com.codehunter.modulithproject.warehouse.WarehouseProductDTO;
 import com.codehunter.modulithproject.warehouse.WarehouseService;
 import com.codehunter.modulithproject.warehouse.jpa.JpaWarehouseProduct;
@@ -9,10 +11,10 @@ import com.codehunter.modulithproject.warehouse.jpa.ProductOutOfStockException;
 import com.codehunter.modulithproject.warehouse.jpa_repository.WarehouseProductRepository;
 import com.codehunter.modulithproject.warehouse.mapper.WarehouseProductMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,13 +26,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class WarehouseServiceImpl implements WarehouseService {
     private final WarehouseProductRepository productRepository;
-    private final ApplicationEventPublisher applicationEventPublisher;
     private final WarehouseProductMapper warehouseProductMapper;
+    private final EventSourcingService eventSourcingService;
 
-    public WarehouseServiceImpl(WarehouseProductRepository productRepository, ApplicationEventPublisher applicationEventPublisher, WarehouseProductMapper warehouseProductMapper) {
+    public WarehouseServiceImpl(WarehouseProductRepository productRepository, WarehouseProductMapper warehouseProductMapper, EventSourcingService eventSourcingService) {
         this.productRepository = productRepository;
-        this.applicationEventPublisher = applicationEventPublisher;
         this.warehouseProductMapper = warehouseProductMapper;
+        this.eventSourcingService = eventSourcingService;
     }
 
     @Override
@@ -46,12 +48,22 @@ public class WarehouseServiceImpl implements WarehouseService {
             existentProductList.forEach(JpaWarehouseProduct::reserveForOrder);
         } catch (ProductOutOfStockException exception) {
             log.info("[WarehouseProductOutOfStockEvent]Products are out of stock for OrderId={}", orderId);
-            applicationEventPublisher.publishEvent(new WarehouseProductOutOfStockEvent(request.orderId(), warehouseProductMapper.toProductDto(exception.getProduct())));
+//            applicationEventPublisher.publishEvent(new WarehouseProductOutOfStockEvent(request.orderId(), warehouseProductMapper.toProductDto(exception.getProduct())));
+            eventSourcingService.addWarehouseEvent(
+                    new WarehouseEvent(List.of(
+                            warehouseProductMapper.toProductDto(exception.getProduct())),
+                            request.orderId(),
+                            WarehouseEvent.WarehouseEventType.OUT_OF_STOCK_PRODUCT));
             return;
         }
         productRepository.saveAll(existentProductList);
         log.info("[WarehouseProductPackageCompletedEvent]Products are ready for OrderId={}", orderId);
-        applicationEventPublisher.publishEvent(new WarehouseProductPackageCompletedEvent(orderId));
+//        applicationEventPublisher.publishEvent(new WarehouseProductPackageCompletedEvent(orderId));
+        eventSourcingService.addWarehouseEvent(
+                new WarehouseEvent(
+                        Collections.EMPTY_LIST,
+                        request.orderId(),
+                        WarehouseEvent.WarehouseEventType.RESERVE_PRODUCT_COMPLETED));
     }
 
     @Override

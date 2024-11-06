@@ -1,5 +1,7 @@
 package com.codehunter.modulithproject.warehouse;
 
+import com.codehunter.modulithproject.eventsourcing.ProductDTO;
+
 import java.util.List;
 import java.util.Set;
 
