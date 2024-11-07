@@ -20,8 +20,7 @@ public class WarehouseEventHandler {
         log.info("[Warehouse]Consume Order event {}", orderEvent.orderEventType());
         switch (orderEvent.orderEventType()) {
             case CREATED:
-                warehouseService.reserveProductForOrder(
-                        new WarehouseService.ReserveProductForOrderRequest(orderEvent.order().id(), orderEvent.order().products()));
+                warehouseService.reserveProductForOrder(orderEvent.order());
                 break;
             case IN_PAYMENT, CANCELLED:
                 log.info("Do nothing");

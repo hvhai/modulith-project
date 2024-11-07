@@ -1,6 +1,7 @@
 package com.codehunter.modulithproject.warehouse.business;
 
 import com.codehunter.modulithproject.eventsourcing.EventSourcingService;
+import com.codehunter.modulithproject.eventsourcing.OrderDTO;
 import com.codehunter.modulithproject.eventsourcing.ProductDTO;
 import com.codehunter.modulithproject.eventsourcing.WarehouseEvent;
 import com.codehunter.modulithproject.shared.IdNotFoundException;
@@ -37,9 +38,9 @@ public class WarehouseServiceImpl implements WarehouseService {
 
     @Override
     @Transactional
-    public void reserveProductForOrder(ReserveProductForOrderRequest request) {
-        String orderId = request.orderId();
-        log.info("Reserve product for OrderId={}", request.orderId());
+    public void reserveProductForOrder(OrderDTO request) {
+        String orderId = request.id();
+        log.info("Reserve product for OrderId={}", request.id());
         Map<String, ProductDTO> productMap = request.products().stream()
                 .collect(Collectors.toMap(ProductDTO::id, Function.identity()));
         List<JpaWarehouseProduct> existentProductList = productRepository.findAllById(productMap.keySet());
@@ -52,7 +53,7 @@ public class WarehouseServiceImpl implements WarehouseService {
             eventSourcingService.addWarehouseEvent(
                     new WarehouseEvent(List.of(
                             warehouseProductMapper.toProductDto(exception.getProduct())),
-                            request.orderId(),
+                            request.id(),
                             WarehouseEvent.WarehouseEventType.OUT_OF_STOCK_PRODUCT));
             return;
         }
@@ -62,7 +63,7 @@ public class WarehouseServiceImpl implements WarehouseService {
         eventSourcingService.addWarehouseEvent(
                 new WarehouseEvent(
                         Collections.EMPTY_LIST,
-                        request.orderId(),
+                        request.id(),
                         WarehouseEvent.WarehouseEventType.RESERVE_PRODUCT_COMPLETED));
     }
 

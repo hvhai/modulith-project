@@ -23,9 +23,7 @@ public class PaymentEventHandler {
                 log.info("Do nothing");
                 break;
             case IN_PAYMENT:
-                paymentService.createPayment(
-                        new PaymentService.CreatePaymentRequest(
-                                orderEvent.order().id(), orderEvent.order().totalAmount()));
+                paymentService.createPayment(orderEvent.order());
                 break;
         }
 

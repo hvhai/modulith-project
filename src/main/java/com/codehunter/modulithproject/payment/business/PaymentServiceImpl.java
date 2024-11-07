@@ -2,6 +2,7 @@ package com.codehunter.modulithproject.payment.business;
 
 
 import com.codehunter.modulithproject.eventsourcing.EventSourcingService;
+import com.codehunter.modulithproject.eventsourcing.OrderDTO;
 import com.codehunter.modulithproject.eventsourcing.PaymentDTO;
 import com.codehunter.modulithproject.eventsourcing.PaymentEvent;
 import com.codehunter.modulithproject.payment.PaymentService;
@@ -62,8 +63,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public void createPayment(CreatePaymentRequest request) {
-        JpaPayment newPayment = new JpaPayment(request.orderId(), request.totalAmount());
+    public void createPayment(OrderDTO request) {
+        JpaPayment newPayment = new JpaPayment(request.id(), request.totalAmount());
         JpaPayment createdPayment = paymentRepository.save(newPayment);
         PaymentDTO paymentDTO = paymentMapper.toPaymentDTO(createdPayment);
         log.info("[PaymentCreatedEvent]Payment created for OrderId={}", createdPayment.getOrderId());

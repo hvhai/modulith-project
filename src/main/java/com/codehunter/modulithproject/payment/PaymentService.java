@@ -1,5 +1,6 @@
 package com.codehunter.modulithproject.payment;
 
+import com.codehunter.modulithproject.eventsourcing.OrderDTO;
 import com.codehunter.modulithproject.eventsourcing.PaymentDTO;
 
 import java.math.BigDecimal;
@@ -15,5 +16,5 @@ public interface PaymentService {
     record CreatePaymentRequest(String orderId, BigDecimal totalAmount) {
     }
 
-    void createPayment(CreatePaymentRequest request);
+    void createPayment(OrderDTO request);
 }
