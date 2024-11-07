@@ -57,9 +57,9 @@ dependencies {
 
 	// monitoring
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
-	runtimeOnly("org.springframework.modulith:spring-modulith-starter-insight")
-	runtimeOnly("io.micrometer:micrometer-tracing-bridge-otel")
-	runtimeOnly("io.opentelemetry:opentelemetry-exporter-zipkin")
+	implementation("org.springframework.modulith:spring-modulith-starter-insight")
+	implementation("io.micrometer:micrometer-tracing-bridge-otel")
+	implementation("io.opentelemetry:opentelemetry-exporter-zipkin")
 
 	// UI
 	implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
