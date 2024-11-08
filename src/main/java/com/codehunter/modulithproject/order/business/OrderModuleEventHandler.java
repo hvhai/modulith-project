@@ -56,7 +56,7 @@ public class OrderModuleEventHandler {
         JpaOrder order = orderOptional.get();
         JpaOrder updatedOrder = orderRepository.save(order.registerForPayment());
 //        paymentService.createPayment(new PaymentService.CreatePaymentRequest(orderId, updatedOrder.getTotalAmount()));
-        eventSourcingService.addOrderEvent(new OrderEvent(orderMapper.toOrderDTO(updatedOrder), OrderEvent.OrderEventType.IN_PAYMENT));
+        eventSourcingService.addOrderEvent(new OrderEvent(orderMapper.toOrderDTO(updatedOrder), OrderEvent.OrderEventType.PAYMENT_REQUESTED));
     }
 
     void onWarehouseProductOutOfStockEvent(String orderId, ProductDTO product) {
@@ -102,13 +102,13 @@ public class OrderModuleEventHandler {
     public void onWarehouseEvent(WarehouseEvent warehouseEvent) {
         log.info("[Order]Consume Warehouse event {}", warehouseEvent.warehouseEventType());
         switch (warehouseEvent.warehouseEventType()) {
-            case OUT_OF_STOCK_PRODUCT:
+            case OUT_OF_STOCK:
                 onWarehouseProductOutOfStockEvent(warehouseEvent.orderId(), warehouseEvent.products().getFirst());
                 break;
-            case RESERVE_PRODUCT_COMPLETED:
+            case RESERVE_COMPLETED:
                 onWarehouseProductPackageCompletedEvent(warehouseEvent.orderId());
                 break;
-            case ADD_PRODUCT:
+            case ADDED:
                 onWarehouseProductCreateEvent(warehouseEvent.products().getFirst());
                 break;
         }

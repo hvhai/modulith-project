@@ -50,6 +50,6 @@ public class InitData implements ApplicationListener<ContextRefreshedEvent> {
         jpaProducts.stream()
                 .forEach(product ->
                         eventSourcingService.addWarehouseEvent(
-                                new WarehouseEvent(List.of(warehouseProductMapper.toProductDto(product)), product.getId(), WarehouseEvent.WarehouseEventType.ADD_PRODUCT)));
+                                new WarehouseEvent(List.of(warehouseProductMapper.toProductDto(product)), product.getId(), WarehouseEvent.WarehouseEventType.ADDED)));
     }
 }

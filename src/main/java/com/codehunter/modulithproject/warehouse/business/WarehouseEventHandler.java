@@ -22,7 +22,7 @@ public class WarehouseEventHandler {
             case CREATED:
                 warehouseService.reserveProductForOrder(orderEvent.order());
                 break;
-            case IN_PAYMENT, CANCELLED:
+            case PAYMENT_REQUESTED, CANCELLED:
                 log.info("Do nothing");
                 break;
         }

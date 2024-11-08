@@ -22,7 +22,7 @@ public class PaymentEventHandler {
             case CREATED, CANCELLED:
                 log.info("Do nothing");
                 break;
-            case IN_PAYMENT:
+            case PAYMENT_REQUESTED:
                 paymentService.createPayment(orderEvent.order());
                 break;
         }

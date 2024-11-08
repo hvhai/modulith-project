@@ -54,7 +54,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                     new WarehouseEvent(List.of(
                             warehouseProductMapper.toProductDto(exception.getProduct())),
                             request.id(),
-                            WarehouseEvent.WarehouseEventType.OUT_OF_STOCK_PRODUCT));
+                            WarehouseEvent.WarehouseEventType.OUT_OF_STOCK));
             return;
         }
         productRepository.saveAll(existentProductList);
@@ -64,7 +64,7 @@ public class WarehouseServiceImpl implements WarehouseService {
                 new WarehouseEvent(
                         Collections.EMPTY_LIST,
                         request.id(),
-                        WarehouseEvent.WarehouseEventType.RESERVE_PRODUCT_COMPLETED));
+                        WarehouseEvent.WarehouseEventType.RESERVE_COMPLETED));
     }
 
     @Override
