@@ -1,8 +1,9 @@
 package com.codehunter.modulithproject.warehouse.init;
 
-import com.codehunter.modulithproject.warehouse.WarehouseProductCreateEvent;
+import com.codehunter.modulithproject.warehouse.WarehouseEvent;
 import com.codehunter.modulithproject.warehouse.jpa.JpaWarehouseProduct;
 import com.codehunter.modulithproject.warehouse.jpa_repository.WarehouseProductRepository;
+import com.codehunter.modulithproject.warehouse.mapper.WarehouseProductMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
@@ -19,10 +20,12 @@ import java.util.List;
 public class InitData implements ApplicationListener<ContextRefreshedEvent> {
     private final WarehouseProductRepository productRepository;
     private final ApplicationEventPublisher publisher;
+    private final WarehouseProductMapper warehouseProductMapper;
 
-    public InitData(WarehouseProductRepository productRepository, ApplicationEventPublisher publisher) {
+    public InitData(WarehouseProductRepository productRepository, ApplicationEventPublisher publisher, WarehouseProductMapper warehouseProductMapper) {
         this.productRepository = productRepository;
         this.publisher = publisher;
+        this.warehouseProductMapper = warehouseProductMapper;
     }
 
     @Override
@@ -43,6 +46,6 @@ public class InitData implements ApplicationListener<ContextRefreshedEvent> {
         List<JpaWarehouseProduct> jpaProducts = productRepository.saveAll(List.of(product1, product2, product3));
         jpaProducts.stream().forEach(product ->
                 publisher.publishEvent(
-                        new WarehouseProductCreateEvent(product.getId(), product.getName(), product.getPrice())));
+                        new WarehouseEvent(List.of(warehouseProductMapper.toProductDto(product)), product.getId(), WarehouseEvent.WarehouseEventType.ADDED)));
     }
 }

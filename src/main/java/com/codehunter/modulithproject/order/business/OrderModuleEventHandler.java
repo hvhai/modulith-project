@@ -6,20 +6,15 @@ import com.codehunter.modulithproject.order.jpa.JpaOrderProduct;
 import com.codehunter.modulithproject.order.jpa_repository.OrderPaymentRepository;
 import com.codehunter.modulithproject.order.jpa_repository.OrderProductRepository;
 import com.codehunter.modulithproject.order.jpa_repository.OrderRepository;
-import com.codehunter.modulithproject.order.mapper.OrderPaymentMapper;
-import com.codehunter.modulithproject.payment.PaymentCreatedEvent;
-import com.codehunter.modulithproject.payment.PaymentPurchasedEvent;
+import com.codehunter.modulithproject.order.mapper.OrderMapper;
+import com.codehunter.modulithproject.payment.PaymentEvent;
 import com.codehunter.modulithproject.payment.PaymentService;
-import com.codehunter.modulithproject.warehouse.WarehouseProductCreateEvent;
-import com.codehunter.modulithproject.warehouse.WarehouseService;
+import com.codehunter.modulithproject.shared.PaymentDTO;
+import com.codehunter.modulithproject.shared.ProductDTO;
+import com.codehunter.modulithproject.warehouse.WarehouseEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.modulith.events.ApplicationModuleListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.Optional;
 
@@ -30,19 +25,18 @@ public class OrderModuleEventHandler {
     private final OrderRepository orderRepository;
     private final OrderPaymentRepository orderPaymentRepository;
     private final PaymentService paymentService;
-    private final OrderPaymentMapper orderPaymentMapper;
+    private final OrderMapper orderMapper;
 
     public OrderModuleEventHandler(OrderProductRepository productRepository, OrderRepository orderRepository, OrderPaymentRepository orderPaymentRepository,
-                                   PaymentService paymentService, OrderPaymentMapper orderPaymentMapper) {
+                                   PaymentService paymentService, OrderMapper orderMapper) {
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
         this.orderPaymentRepository = orderPaymentRepository;
         this.paymentService = paymentService;
-        this.orderPaymentMapper = orderPaymentMapper;
+        this.orderMapper = orderMapper;
     }
 
-    @ApplicationModuleListener
-    void onWarehouseProductCreateEvent(WarehouseProductCreateEvent event) {
+    void onWarehouseProductCreateEvent(ProductDTO event) {
         log.info("On WarehouseProductCreateEvent, Product id={}, name={}, price={}", event.id(), event.name(), event.price());
         JpaOrderProduct product = new JpaOrderProduct();
         product.setName(event.name());
@@ -51,9 +45,7 @@ public class OrderModuleEventHandler {
         productRepository.save(product);
     }
 
-    @ApplicationModuleListener
-    void onWarehouseProductPackageCompletedEvent(WarehouseService.WarehouseProductPackageCompletedEvent event) {
-        String orderId = event.orderId();
+    void onWarehouseProductPackageCompletedEvent(String orderId) {
         log.info("On WarehouseProductPackageCompletedEvent, Order orderId={}", orderId);
         Optional<JpaOrder> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isEmpty()) {
@@ -62,12 +54,10 @@ public class OrderModuleEventHandler {
         }
         JpaOrder order = orderOptional.get();
         JpaOrder updatedOrder = orderRepository.save(order.registerForPayment());
-        paymentService.createPayment(new PaymentService.CreatePaymentRequest(orderId, updatedOrder.getTotalAmount()));
+        paymentService.createPayment(orderMapper.toOrderDTO(updatedOrder));
     }
 
-    @ApplicationModuleListener
-    void onWarehouseProductOutOfStockEvent(WarehouseService.WarehouseProductOutOfStockEvent event) {
-        String orderId = event.orderId();
+    void onWarehouseProductOutOfStockEvent(String orderId, ProductDTO product) {
         log.info("On WarehouseProductOutOfStockEvent, Order orderId={}", orderId);
         Optional<JpaOrder> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isEmpty()) {
@@ -79,11 +69,8 @@ public class OrderModuleEventHandler {
         log.info("On WarehouseProductOutOfStockEvent, Order orderId={} change status to CANCELED", orderId);
     }
 
-    @Async
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    void onPaymentCreatedEvent(PaymentCreatedEvent event) {
-        String orderId = event.payment().orderId();
+    void onPaymentCreatedEvent(PaymentDTO event) {
+        String orderId = event.orderId();
         log.info("On PaymentCreatedEvent, Order orderId={}", orderId);
         Optional<JpaOrder> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isEmpty()) {
@@ -91,14 +78,13 @@ public class OrderModuleEventHandler {
             return;
         }
         JpaOrder order = orderOptional.get();
-        JpaOrderPayment jpaOrderPayment = orderPaymentRepository.save(new JpaOrderPayment(event.payment().id(), order, event.payment().totalAmount()));
+        JpaOrderPayment jpaOrderPayment = orderPaymentRepository.save(new JpaOrderPayment(event.id(), order, event.totalAmount()));
         orderRepository.save(order.waitingForPayment(jpaOrderPayment));
         log.info("On PaymentCreatedEvent, Order orderId={} change status to WAITING_FOR_PAYMENT", orderId);
     }
 
-    @ApplicationModuleListener
-    void onPaymentPurchasedEvent(PaymentPurchasedEvent event) {
-        String orderId = event.payment().orderId();
+    void onPaymentPurchasedEvent(PaymentDTO event) {
+        String orderId = event.orderId();
         log.info("On PaymentPurchasedEvent, Order orderId={}", orderId);
         Optional<JpaOrder> orderOptional = orderRepository.findById(orderId);
         if (orderOptional.isEmpty()) {
@@ -109,4 +95,34 @@ public class OrderModuleEventHandler {
         orderRepository.save(order.finish());
         log.info("On PaymentPurchasedEvent, Order orderId={} change status to DONE", orderId);
     }
+
+    @ApplicationModuleListener
+    public void onWarehouseEvent(WarehouseEvent warehouseEvent) {
+        log.info("[Order]Consume Warehouse event {}", warehouseEvent.warehouseEventType());
+        switch (warehouseEvent.warehouseEventType()) {
+            case OUT_OF_STOCK:
+                onWarehouseProductOutOfStockEvent(warehouseEvent.orderId(), warehouseEvent.products().getFirst());
+                break;
+            case RESERVE_COMPLETED:
+                onWarehouseProductPackageCompletedEvent(warehouseEvent.orderId());
+                break;
+            case ADDED:
+                onWarehouseProductCreateEvent(warehouseEvent.products().getFirst());
+                break;
+        }
+    }
+
+    @ApplicationModuleListener
+    public void onPaymentEvent(PaymentEvent paymentEvent) {
+        log.info("[Order]Consume Payment event {}", paymentEvent.paymentEventType());
+        switch (paymentEvent.paymentEventType()) {
+            case CREATED:
+                onPaymentCreatedEvent(paymentEvent.payment());
+                break;
+            case PURCHASED:
+                onPaymentPurchasedEvent(paymentEvent.payment());
+                break;
+        }
+    }
+
 }

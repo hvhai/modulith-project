@@ -1,4 +1,4 @@
-package com.codehunter.modulithproject.warehouse;
+package com.codehunter.modulithproject.shared;
 
 import java.math.BigDecimal;
 

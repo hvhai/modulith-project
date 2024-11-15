@@ -1,19 +1,13 @@
 package com.codehunter.modulithproject.warehouse;
 
+import com.codehunter.modulithproject.shared.OrderDTO;
+import com.codehunter.modulithproject.shared.ProductDTO;
+import com.codehunter.modulithproject.shared.WarehouseProductDTO;
+
 import java.util.List;
-import java.util.Set;
 
 public interface WarehouseService {
-    record ReserveProductForOrderRequest(String orderId, Set<ProductDTO> products) {
-    }
-
-    record WarehouseProductOutOfStockEvent(String orderId, ProductDTO product) {
-    }
-
-    record WarehouseProductPackageCompletedEvent(String orderId) {
-    }
-
-    void reserveProductForOrder(ReserveProductForOrderRequest request);
+    void reserveProductForOrder(OrderDTO request);
 
     List<WarehouseProductDTO> getAllProduct();
 

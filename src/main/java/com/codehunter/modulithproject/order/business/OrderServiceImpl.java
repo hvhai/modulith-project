@@ -1,6 +1,5 @@
 package com.codehunter.modulithproject.order.business;
 
-import com.codehunter.modulithproject.order.OrderDTO;
 import com.codehunter.modulithproject.order.OrderService;
 import com.codehunter.modulithproject.order.UserDTO;
 import com.codehunter.modulithproject.order.jpa.JpaOrder;
@@ -10,6 +9,7 @@ import com.codehunter.modulithproject.order.jpa_repository.OrderRepository;
 import com.codehunter.modulithproject.order.mapper.OrderMapper;
 import com.codehunter.modulithproject.order.mapper.OrderProductMapper;
 import com.codehunter.modulithproject.shared.IdNotFoundException;
+import com.codehunter.modulithproject.shared.OrderDTO;
 import com.codehunter.modulithproject.warehouse.WarehouseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,8 +44,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderDTO createOrder(OrderDTO createOrderRequest, UserDTO user) {
         JpaOrder newOrder = createJpaOrder(createOrderRequest);
         OrderDTO result = orderMapper.toOrderDTO(newOrder);
-        warehouseService.reserveProductForOrder(
-                new WarehouseService.ReserveProductForOrderRequest(result.id(), result.products()));
+        warehouseService.reserveProductForOrder(result);
         return result;
     }
 

@@ -1,14 +1,14 @@
 package com.codehunter.modulithproject.payment.business;
 
 
-import com.codehunter.modulithproject.payment.PaymentCreatedEvent;
-import com.codehunter.modulithproject.payment.PaymentDTO;
-import com.codehunter.modulithproject.payment.PaymentPurchasedEvent;
+import com.codehunter.modulithproject.payment.PaymentEvent;
 import com.codehunter.modulithproject.payment.PaymentService;
 import com.codehunter.modulithproject.payment.jpa.JpaPayment;
 import com.codehunter.modulithproject.payment.jpa_repository.PaymentRepository;
 import com.codehunter.modulithproject.payment.mapper.PaymentMapper;
 import com.codehunter.modulithproject.shared.IdNotFoundException;
+import com.codehunter.modulithproject.shared.OrderDTO;
+import com.codehunter.modulithproject.shared.PaymentDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,7 @@ public class PaymentServiceImpl implements PaymentService {
         JpaPayment updatedPayment = paymentRepository.save(payment.purchase());
         PaymentDTO paymentDTO = paymentMapper.toPaymentDTO(updatedPayment);
         log.info("[PaymentPurchasedEvent]Payment is purchased for OrderId={}", payment.getOrderId());
-        applicationEventPublisher.publishEvent(new PaymentPurchasedEvent(paymentDTO));
+        applicationEventPublisher.publishEvent(new PaymentEvent(paymentDTO, PaymentEvent.PaymentEventType.PURCHASED));
         return paymentDTO;
     }
 
@@ -62,11 +62,11 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @Transactional
-    public void createPayment(CreatePaymentRequest request) {
-        JpaPayment newPayment = new JpaPayment(request.orderId(), request.totalAmount());
+    public void createPayment(OrderDTO request) {
+        JpaPayment newPayment = new JpaPayment(request.id(), request.totalAmount());
         JpaPayment createdPayment = paymentRepository.save(newPayment);
         PaymentDTO paymentDTO = paymentMapper.toPaymentDTO(createdPayment);
         log.info("[PaymentCreatedEvent]Payment created for OrderId={}", createdPayment.getOrderId());
-        applicationEventPublisher.publishEvent(new PaymentCreatedEvent(paymentDTO));
+        applicationEventPublisher.publishEvent(new PaymentEvent(paymentDTO, PaymentEvent.PaymentEventType.CREATED));
     }
 }
