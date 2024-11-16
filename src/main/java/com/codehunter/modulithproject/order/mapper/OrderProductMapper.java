@@ -14,6 +14,8 @@ public interface OrderProductMapper {
     JpaOrderProduct toJpaOrderProduct(ProductDTO productDTO);
 
     List<JpaOrderProduct> toJpaOrderProduct(List<ProductDTO> productDTOList);
+
     Set<JpaOrderProduct> toJpaOrderProduct(Set<ProductDTO> productDTOSet);
+
     Set<ProductDTO> toProductDTO(Set<JpaOrderProduct> jpaOrderProductSet);
 }

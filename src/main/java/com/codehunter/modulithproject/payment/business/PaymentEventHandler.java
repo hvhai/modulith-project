@@ -1,7 +1,7 @@
 package com.codehunter.modulithproject.payment.business;
 
-import com.codehunter.modulithproject.shared.OrderEvent;
 import com.codehunter.modulithproject.payment.PaymentService;
+import com.codehunter.modulithproject.shared.OrderEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
