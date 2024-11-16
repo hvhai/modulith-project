@@ -1,7 +1,7 @@
 package com.codehunter.modulithproject.order.mapper;
 
 import com.codehunter.modulithproject.order.jpa.JpaOrderProduct;
-import com.codehunter.modulithproject.warehouse.ProductDTO;
+import com.codehunter.modulithproject.shared.ProductDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -14,6 +14,8 @@ public interface OrderProductMapper {
     JpaOrderProduct toJpaOrderProduct(ProductDTO productDTO);
 
     List<JpaOrderProduct> toJpaOrderProduct(List<ProductDTO> productDTOList);
+
     Set<JpaOrderProduct> toJpaOrderProduct(Set<ProductDTO> productDTOSet);
+
     Set<ProductDTO> toProductDTO(Set<JpaOrderProduct> jpaOrderProductSet);
 }

@@ -1,4 +1,4 @@
-package com.codehunter.modulithproject.payment;
+package com.codehunter.modulithproject.shared;
 
 import java.math.BigDecimal;
 import java.time.Instant;

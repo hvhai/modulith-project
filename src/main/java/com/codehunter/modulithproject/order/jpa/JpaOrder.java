@@ -1,6 +1,6 @@
 package com.codehunter.modulithproject.order.jpa;
 
-import com.codehunter.modulithproject.order.OrderStatus;
+import com.codehunter.modulithproject.shared.OrderStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -77,7 +77,7 @@ public class JpaOrder extends AbstractAggregateRoot<JpaOrder> {
 
     public JpaOrder registerForPayment() {
         log.info("Register payment for Order id={}", this.id);
-        this.orderStatus = OrderStatus.IN_PAYMENT;
+        this.orderStatus = OrderStatus.IN_PAYMENT_REQUESTED;
         BigDecimal totalAmount = this.products.stream()
                 .map(JpaOrderProduct::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -88,7 +88,7 @@ public class JpaOrder extends AbstractAggregateRoot<JpaOrder> {
     public JpaOrder waitingForPayment(JpaOrderPayment payment) {
         log.info("Register payment success, update order id={}", this.id);
         this.payment = payment;
-        this.orderStatus = OrderStatus.WAITING_FOR_PAYMENT;
+        this.orderStatus = OrderStatus.WAITING_FOR_PURCHASE;
         return this;
     }
 

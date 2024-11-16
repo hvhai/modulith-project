@@ -1,6 +1,8 @@
 package com.codehunter.modulithproject.payment;
 
-import java.math.BigDecimal;
+import com.codehunter.modulithproject.shared.OrderDTO;
+import com.codehunter.modulithproject.shared.PaymentDTO;
+
 import java.util.List;
 
 public interface PaymentService {
@@ -10,8 +12,5 @@ public interface PaymentService {
 
     List<PaymentDTO> getAllPayments();
 
-    record CreatePaymentRequest(String orderId, BigDecimal totalAmount) {
-    }
-
-    void createPayment(CreatePaymentRequest request);
+    void createPayment(OrderDTO request);
 }
