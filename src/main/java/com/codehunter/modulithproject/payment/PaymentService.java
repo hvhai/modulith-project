@@ -1,7 +1,7 @@
 package com.codehunter.modulithproject.payment;
 
-import com.codehunter.modulithproject.eventsourcing.OrderDTO;
-import com.codehunter.modulithproject.eventsourcing.PaymentDTO;
+import com.codehunter.modulithproject.shared.OrderDTO;
+import com.codehunter.modulithproject.shared.PaymentDTO;
 
 import java.util.List;
 

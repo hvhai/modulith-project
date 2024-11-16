@@ -1,6 +1,6 @@
 package com.codehunter.modulithproject.warehouse.mapper;
 
-import com.codehunter.modulithproject.eventsourcing.ProductDTO;
+import com.codehunter.modulithproject.shared.ProductDTO;
 import com.codehunter.modulithproject.warehouse.WarehouseProductDTO;
 import com.codehunter.modulithproject.warehouse.jpa.JpaWarehouseProduct;
 import org.mapstruct.Mapper;

@@ -1,11 +1,11 @@
 package com.codehunter.modulithproject.order.business;
 
 import com.codehunter.modulithproject.eventsourcing.EventSourcingService;
-import com.codehunter.modulithproject.eventsourcing.OrderEvent;
-import com.codehunter.modulithproject.eventsourcing.PaymentDTO;
-import com.codehunter.modulithproject.eventsourcing.PaymentEvent;
-import com.codehunter.modulithproject.eventsourcing.ProductDTO;
-import com.codehunter.modulithproject.eventsourcing.WarehouseEvent;
+import com.codehunter.modulithproject.shared.OrderEvent;
+import com.codehunter.modulithproject.shared.PaymentDTO;
+import com.codehunter.modulithproject.shared.PaymentEvent;
+import com.codehunter.modulithproject.shared.ProductDTO;
+import com.codehunter.modulithproject.shared.WarehouseEvent;
 import com.codehunter.modulithproject.order.jpa.JpaOrder;
 import com.codehunter.modulithproject.order.jpa.JpaOrderPayment;
 import com.codehunter.modulithproject.order.jpa.JpaOrderProduct;

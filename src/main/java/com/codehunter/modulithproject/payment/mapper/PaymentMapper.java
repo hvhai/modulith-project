@@ -1,6 +1,6 @@
 package com.codehunter.modulithproject.payment.mapper;
 
-import com.codehunter.modulithproject.eventsourcing.PaymentDTO;
+import com.codehunter.modulithproject.shared.PaymentDTO;
 import com.codehunter.modulithproject.payment.jpa.JpaPayment;
 import org.mapstruct.Mapper;
 

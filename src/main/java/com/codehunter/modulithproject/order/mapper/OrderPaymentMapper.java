@@ -3,7 +3,7 @@ package com.codehunter.modulithproject.order.mapper;
 import com.codehunter.modulithproject.order.jpa.JpaOrder;
 import com.codehunter.modulithproject.order.jpa.JpaOrderPayment;
 import com.codehunter.modulithproject.order.jpa_repository.OrderRepository;
-import com.codehunter.modulithproject.eventsourcing.PaymentDTO;
+import com.codehunter.modulithproject.shared.PaymentDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;

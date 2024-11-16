@@ -1,9 +1,9 @@
 package com.codehunter.modulithproject.eventsourcing.business;
 
 import com.codehunter.modulithproject.eventsourcing.EventSourcingService;
-import com.codehunter.modulithproject.eventsourcing.OrderEvent;
-import com.codehunter.modulithproject.eventsourcing.PaymentEvent;
-import com.codehunter.modulithproject.eventsourcing.WarehouseEvent;
+import com.codehunter.modulithproject.shared.OrderEvent;
+import com.codehunter.modulithproject.shared.PaymentEvent;
+import com.codehunter.modulithproject.shared.WarehouseEvent;
 import io.opentelemetry.api.trace.Span;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;

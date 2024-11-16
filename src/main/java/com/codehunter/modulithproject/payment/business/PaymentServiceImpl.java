@@ -2,9 +2,9 @@ package com.codehunter.modulithproject.payment.business;
 
 
 import com.codehunter.modulithproject.eventsourcing.EventSourcingService;
-import com.codehunter.modulithproject.eventsourcing.OrderDTO;
-import com.codehunter.modulithproject.eventsourcing.PaymentDTO;
-import com.codehunter.modulithproject.eventsourcing.PaymentEvent;
+import com.codehunter.modulithproject.shared.OrderDTO;
+import com.codehunter.modulithproject.shared.PaymentDTO;
+import com.codehunter.modulithproject.shared.PaymentEvent;
 import com.codehunter.modulithproject.payment.PaymentService;
 import com.codehunter.modulithproject.payment.jpa.JpaPayment;
 import com.codehunter.modulithproject.payment.jpa_repository.PaymentRepository;

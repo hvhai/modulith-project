@@ -1,7 +1,7 @@
 package com.codehunter.modulithproject.warehouse.init;
 
 import com.codehunter.modulithproject.eventsourcing.EventSourcingService;
-import com.codehunter.modulithproject.eventsourcing.WarehouseEvent;
+import com.codehunter.modulithproject.shared.WarehouseEvent;
 import com.codehunter.modulithproject.warehouse.jpa.JpaWarehouseProduct;
 import com.codehunter.modulithproject.warehouse.jpa_repository.WarehouseProductRepository;
 import com.codehunter.modulithproject.warehouse.mapper.WarehouseProductMapper;

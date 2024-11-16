@@ -1,4 +1,4 @@
-package com.codehunter.modulithproject.eventsourcing;
+package com.codehunter.modulithproject.shared;
 
 import java.util.List;
 

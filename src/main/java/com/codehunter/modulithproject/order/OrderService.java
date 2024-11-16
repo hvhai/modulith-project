@@ -1,6 +1,6 @@
 package com.codehunter.modulithproject.order;
 
-import com.codehunter.modulithproject.eventsourcing.OrderDTO;
+import com.codehunter.modulithproject.shared.OrderDTO;
 
 import java.util.List;
 
