@@ -7,7 +7,6 @@ import com.codehunter.modulithproject.order.jpa.JpaOrderProduct;
 import com.codehunter.modulithproject.order.jpa_repository.OrderProductRepository;
 import com.codehunter.modulithproject.order.jpa_repository.OrderRepository;
 import com.codehunter.modulithproject.order.mapper.OrderMapper;
-import com.codehunter.modulithproject.order.mapper.OrderProductMapper;
 import com.codehunter.modulithproject.shared.IdNotFoundException;
 import com.codehunter.modulithproject.shared.OrderDTO;
 import com.codehunter.modulithproject.warehouse.WarehouseService;
@@ -28,15 +27,13 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
     private final OrderMapper orderMapper;
-    private final OrderProductMapper orderProductMapper;
 
     public OrderServiceImpl(WarehouseService warehouseService, OrderRepository orderRepository,
-                            OrderProductRepository orderProductRepository, OrderMapper orderMapper, OrderProductMapper orderProductMapper) {
+                            OrderProductRepository orderProductRepository, OrderMapper orderMapper) {
         this.warehouseService = warehouseService;
         this.orderRepository = orderRepository;
         this.orderProductRepository = orderProductRepository;
         this.orderMapper = orderMapper;
-        this.orderProductMapper = orderProductMapper;
     }
 
     @Override
