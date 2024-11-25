@@ -6,7 +6,7 @@ import com.codehunter.modulithproject.method_playground.method.MethodEntity;
 import com.codehunter.modulithproject.method_playground.method.MethodEntityCapabilityType;
 
 public final class EntityMapper {
-    public static EntityDTO toEntityDTO(MethodEntity method){
+    public static EntityDTO toEntityDTO(MethodEntity method) {
         return new EntityDTO(
                 method.id(),
                 method.type().getText(),
@@ -16,7 +16,7 @@ public final class EntityMapper {
                         .toList());
     }
 
-    public static Entity toEntity(MethodEntity method){
+    public static Entity toEntity(MethodEntity method) {
         return new Entity(
                 method.id(),
                 method.type().getText(),
@@ -26,7 +26,7 @@ public final class EntityMapper {
                         .toList());
     }
 
-    public static EntityDTO toEntityDTO(Entity method){
+    public static EntityDTO toEntityDTO(Entity method) {
         return new EntityDTO(
                 method.getId(),
                 method.getType(),

@@ -16,6 +16,7 @@ public class CustomHeaderInterceptor implements ClientHttpRequestInterceptor {
         this.headerName = headerName;
         this.headerValue = headerValue;
     }
+
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         HttpHeaders headers = request.getHeaders();

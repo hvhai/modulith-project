@@ -52,7 +52,7 @@ public class JpaWarehouseProduct {
         if (this.quantity < 1) {
             throw new ProductOutOfStockException("Not enough quantity to reserve " + this, this);
         }
-        this.quantity -= quantity;
+        this.quantity -= 1;
         return this;
     }
 }

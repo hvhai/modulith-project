@@ -27,6 +27,7 @@ extra["springModulithVersion"] = "1.2.4"
 dependencies {
 	// spring
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework:spring-webflux")
 
 	// modulith
 	implementation("org.springframework.modulith:spring-modulith-starter-core")
@@ -41,6 +42,7 @@ dependencies {
 
 	// database
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("com.github.gavlyukovskiy:datasource-proxy-spring-boot-starter:1.10.0")
 	runtimeOnly("com.h2database:h2")
 	implementation("com.mysql:mysql-connector-j")
 	testImplementation("org.testcontainers:mysql")
@@ -69,6 +71,9 @@ dependencies {
 
 	// test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	implementation("com.c4-soft.springaddons:spring-addons-oauth2-test:7.1.10")
+	testImplementation("org.springframework.security:spring-security-test")
+	testImplementation("org.wiremock:wiremock-standalone:3.9.2")
 
 }
 

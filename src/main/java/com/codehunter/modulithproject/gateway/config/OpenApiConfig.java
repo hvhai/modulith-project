@@ -38,6 +38,7 @@ public class OpenApiConfig {
                 .pathsToMatch("/api/countdown-timer/**")
                 .build();
     }
+
     @Bean
     public GroupedOpenApi methodPlaygroundApi() {
         return GroupedOpenApi.builder()
