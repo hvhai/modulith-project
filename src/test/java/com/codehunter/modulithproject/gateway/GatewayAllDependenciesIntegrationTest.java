@@ -31,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Import(TestSecurityConfiguration.class)
 @Sql(scripts = "classpath:datasource/schema-integration.sql")
 @TestPropertySource(properties = {
+        "spring.main.lazy-initialization=true",
         "spring.jpa.properties.hibernate.enable_lazy_load_no_trans=true"
 })
 class GatewayAllDependenciesIntegrationTest {
@@ -60,6 +61,9 @@ class GatewayAllDependenciesIntegrationTest {
         assertThat(warehouseProductDTO1.getName()).isEqualTo("Apple");
         assertThat(warehouseProductDTO1.getQuantity()).isEqualTo(10);
 
+        List<JpaOrder> allOrder = orderRepository.findAll();
+        assertThat(allOrder).hasSize(0);
+
 
         // when
         ProductDTO productDTO = new ProductDTO(
@@ -75,7 +79,7 @@ class GatewayAllDependenciesIntegrationTest {
                 Set.of(productDTO)
         );
 
-        fruitOrderingController.createOrder(orderDTO);
+//        fruitOrderingController.createOrder(orderDTO);
 
         // when
         scenario.stimulate(() -> fruitOrderingController.createOrder(orderDTO))
@@ -84,9 +88,9 @@ class GatewayAllDependenciesIntegrationTest {
                 .toArriveAndVerify(publishedEventAssert -> {
                     // then
                     // Order created
-                    List<JpaOrder> allOrder = orderRepository.findAll();
-                    assertThat(allOrder).hasSize(1);
-                    String orderId = allOrder.get(0).getId();
+                    List<JpaOrder> allOrderAfterCreate = orderRepository.findAll();
+                    assertThat(allOrderAfterCreate).hasSize(1);
+                    String orderId = allOrderAfterCreate.get(0).getId();
                     JpaOrder createdOrder = orderRepository.findById(orderId).get();
 
                     // with selected product
