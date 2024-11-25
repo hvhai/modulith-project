@@ -6,6 +6,8 @@ import com.codehunter.modulithproject.shared.WarehouseEvent;
 
 public interface EventSourcingService {
     void addOrderEvent(OrderEvent event);
+
     void addPaymentEvent(PaymentEvent event);
+
     void addWarehouseEvent(WarehouseEvent event);
 }

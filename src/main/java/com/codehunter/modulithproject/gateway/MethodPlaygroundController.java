@@ -2,12 +2,21 @@ package com.codehunter.modulithproject.gateway;
 
 import com.codehunter.modulithproject.gateway.response.ResponseDTO;
 import com.codehunter.modulithproject.gateway.response.ResponseFormatter;
-import com.codehunter.modulithproject.method_playground.*;
+import com.codehunter.modulithproject.method_playground.EntityDTO;
+import com.codehunter.modulithproject.method_playground.MethodPlaygroundGreetingDTO;
+import com.codehunter.modulithproject.method_playground.MethodPlaygroundService;
+import com.codehunter.modulithproject.method_playground.WebhookEventDTO;
+import com.codehunter.modulithproject.method_playground.WebhookEventRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 

@@ -12,6 +12,7 @@ import java.util.List;
 public interface EventRepository extends JpaRepository<JpaEvent, Long> {
     @Query("select e from JpaEvent e where e.user.id = :userId")
     List<JpaEvent> findByUserId(@Param("userId") String userId);
+
     @Query("select e from JpaEvent e where e.id = :eventId and e.user.id = :userId")
     JpaEvent findByEventIdAndUserId(@Param("eventId") Long eventId, @Param("userId") String userId);
 

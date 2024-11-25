@@ -8,5 +8,6 @@ public interface MethodPlaygroundService {
     List<EntityDTO> getAllEntities();
 
     WebhookEventDTO createWebhookEvent(WebhookEventRequest webhookEventRequest);
+
     List<WebhookEventDTO> getAllWebhookEvents();
 }
