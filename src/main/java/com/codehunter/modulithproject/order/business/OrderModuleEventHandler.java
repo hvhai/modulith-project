@@ -8,6 +8,7 @@ import com.codehunter.modulithproject.order.jpa_repository.OrderPaymentRepositor
 import com.codehunter.modulithproject.order.jpa_repository.OrderProductRepository;
 import com.codehunter.modulithproject.order.jpa_repository.OrderRepository;
 import com.codehunter.modulithproject.order.mapper.OrderMapper;
+import com.codehunter.modulithproject.shared.NotificationEvent;
 import com.codehunter.modulithproject.shared.OrderEvent;
 import com.codehunter.modulithproject.shared.PaymentDTO;
 import com.codehunter.modulithproject.shared.PaymentEvent;
@@ -68,6 +69,11 @@ public class OrderModuleEventHandler {
         }
         JpaOrder order = orderOptional.get();
         orderRepository.save(order.cancel());
+        eventSourcingService.addNotificationEvent(
+                new NotificationEvent(
+                        orderId,
+                        NotificationEvent.NotificationEventType.ORDER_CANCELLED,
+                        "Order canceled because product out of stock"));
         log.info("On WarehouseProductOutOfStockEvent, Order orderId={} change status to CANCELED", orderId);
     }
 
@@ -95,6 +101,12 @@ public class OrderModuleEventHandler {
         }
         JpaOrder order = orderOptional.get();
         orderRepository.save(order.finish());
+
+        eventSourcingService.addNotificationEvent(
+                new NotificationEvent(
+                        orderId,
+                        NotificationEvent.NotificationEventType.ORDER_COMPLETED,
+                        "Order completed"));
         log.info("On PaymentPurchasedEvent, Order orderId={} change status to DONE", orderId);
     }
 
