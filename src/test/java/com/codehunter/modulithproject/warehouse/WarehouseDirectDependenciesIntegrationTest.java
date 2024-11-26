@@ -4,7 +4,7 @@ import com.codehunter.modulithproject.TestSecurityConfiguration;
 import com.codehunter.modulithproject.shared.OrderDTO;
 import com.codehunter.modulithproject.shared.OrderStatus;
 import com.codehunter.modulithproject.shared.ProductDTO;
-import com.codehunter.modulithproject.shared.WarehouseEvent;
+import com.codehunter.modulithproject.eventsourcing.WarehouseEvent;
 import com.codehunter.modulithproject.warehouse.jpa.JpaWarehouseProduct;
 import com.codehunter.modulithproject.warehouse.jpa_repository.WarehouseProductRepository;
 import org.junit.jupiter.api.Test;

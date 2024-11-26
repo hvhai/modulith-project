@@ -1,6 +1,4 @@
-package com.codehunter.modulithproject.shared;
-
-import org.springframework.modulith.events.Externalized;
+package com.codehunter.modulithproject.eventsourcing;
 
 //@Externalized("notification.fruit-ordering")
 public record NotificationEvent(String orderId, NotificationEventType notificationEventType, String message) {

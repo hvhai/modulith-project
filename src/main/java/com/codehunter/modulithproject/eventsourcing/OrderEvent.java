@@ -1,4 +1,6 @@
-package com.codehunter.modulithproject.shared;
+package com.codehunter.modulithproject.eventsourcing;
+
+import com.codehunter.modulithproject.shared.OrderDTO;
 
 public record OrderEvent(OrderDTO order, OrderEventType orderEventType) {
 

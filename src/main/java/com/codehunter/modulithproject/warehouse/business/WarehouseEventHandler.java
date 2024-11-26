@@ -1,6 +1,6 @@
 package com.codehunter.modulithproject.warehouse.business;
 
-import com.codehunter.modulithproject.shared.OrderEvent;
+import com.codehunter.modulithproject.eventsourcing.OrderEvent;
 import com.codehunter.modulithproject.warehouse.WarehouseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.modulith.events.ApplicationModuleListener;

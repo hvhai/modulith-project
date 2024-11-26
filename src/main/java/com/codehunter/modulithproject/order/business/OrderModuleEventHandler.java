@@ -8,12 +8,12 @@ import com.codehunter.modulithproject.order.jpa_repository.OrderPaymentRepositor
 import com.codehunter.modulithproject.order.jpa_repository.OrderProductRepository;
 import com.codehunter.modulithproject.order.jpa_repository.OrderRepository;
 import com.codehunter.modulithproject.order.mapper.OrderMapper;
-import com.codehunter.modulithproject.shared.NotificationEvent;
-import com.codehunter.modulithproject.shared.OrderEvent;
+import com.codehunter.modulithproject.eventsourcing.NotificationEvent;
+import com.codehunter.modulithproject.eventsourcing.OrderEvent;
 import com.codehunter.modulithproject.shared.PaymentDTO;
-import com.codehunter.modulithproject.shared.PaymentEvent;
+import com.codehunter.modulithproject.eventsourcing.PaymentEvent;
 import com.codehunter.modulithproject.shared.ProductDTO;
-import com.codehunter.modulithproject.shared.WarehouseEvent;
+import com.codehunter.modulithproject.eventsourcing.WarehouseEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
