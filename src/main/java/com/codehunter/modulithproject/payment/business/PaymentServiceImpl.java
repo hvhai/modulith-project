@@ -9,7 +9,7 @@ import com.codehunter.modulithproject.payment.mapper.PaymentMapper;
 import com.codehunter.modulithproject.shared.IdNotFoundException;
 import com.codehunter.modulithproject.shared.OrderDTO;
 import com.codehunter.modulithproject.shared.PaymentDTO;
-import com.codehunter.modulithproject.shared.PaymentEvent;
+import com.codehunter.modulithproject.eventsourcing.PaymentEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

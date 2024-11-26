@@ -10,7 +10,7 @@ import com.codehunter.modulithproject.order.jpa_repository.OrderRepository;
 import com.codehunter.modulithproject.order.mapper.OrderMapper;
 import com.codehunter.modulithproject.shared.IdNotFoundException;
 import com.codehunter.modulithproject.shared.OrderDTO;
-import com.codehunter.modulithproject.shared.OrderEvent;
+import com.codehunter.modulithproject.eventsourcing.OrderEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -7,7 +7,7 @@ import com.codehunter.modulithproject.order.jpa.JpaOrder;
 import com.codehunter.modulithproject.order.jpa_repository.OrderRepository;
 import com.codehunter.modulithproject.payment.jpa_repository.PaymentRepository;
 import com.codehunter.modulithproject.shared.OrderDTO;
-import com.codehunter.modulithproject.shared.OrderEvent;
+import com.codehunter.modulithproject.eventsourcing.OrderEvent;
 import com.codehunter.modulithproject.shared.ProductDTO;
 import com.codehunter.modulithproject.warehouse.jpa.JpaWarehouseProduct;
 import com.codehunter.modulithproject.warehouse.jpa_repository.WarehouseProductRepository;
