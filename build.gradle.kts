@@ -2,7 +2,7 @@ plugins {
 	java
 	id("org.springframework.boot") version "3.3.4"
 	id("io.spring.dependency-management") version "1.1.6"
-	id("org.hibernate.orm") version "6.6.1.Final"
+	id("org.hibernate.orm") version "6.6.57.Final"
 }
 
 group = "com.codehunter"
